@@ -7,9 +7,9 @@ import java.util.Arrays;
 import java.util.List;
 
 public class CharNode implements Node {
-    public boolean isRoot;
-    public Node suffixLink;
-    public Edge[] edges;
+    private boolean isRoot;
+    private Node suffixLink;
+    private Edge[] edges;
 
     public CharNode() {
         edges = new Edge[26];

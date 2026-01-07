@@ -9,9 +9,9 @@ import java.util.HashMap;
 import java.util.List;
 
 public class MapNode implements Node{
-    public boolean isRoot;
-    public Node suffixLink;
-    public Map<Character, Edge> edges;
+    private boolean isRoot;
+    private Node suffixLink;
+    private Map<Character, Edge> edges;
 
     public MapNode() {
         edges = new HashMap<>();

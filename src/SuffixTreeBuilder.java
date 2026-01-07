@@ -191,9 +191,7 @@ public class SuffixTreeBuilder {
                          * because each link of suffixes must terminate at the root, which means
                          * traversing down from the root starts a "new" set of links.
                          */
-                        if (currentNode.getSuffixLink().getIsRoot()
-                                &&
-                                !currentNode.getIsRoot()) {
+                        if (currentNode.getSuffixLink().getIsRoot() && !currentNode.getIsRoot()) {
                             lastCreatedInternalNode = null;
                         }
 
