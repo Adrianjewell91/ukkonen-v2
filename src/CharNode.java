@@ -2,7 +2,6 @@
 /*
  * Represents either the root of the tree or an internal branch point.
  */
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -11,8 +10,10 @@ public class CharNode implements Node {
     private Node suffixLink;
     private Edge[] edges;
 
+    private int NUMBER_OF_CHARACTERS = (int) ('z' - 'a' + 1); // == 26.
+
     public CharNode() {
-        edges = new Edge[26];
+        edges = new Edge[NUMBER_OF_CHARACTERS];
     }
 
     public Edge getEdge(char c) 

@@ -1,4 +1,3 @@
-
 /*
  * Represents a global pointer to the terminal index.
  * All terminal edges to a single instance of this class.

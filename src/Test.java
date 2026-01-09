@@ -1,20 +1,24 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Test {
     /*
-    TESTS
-
-    A sequence of strings comprise the tests, and each string derives from the former according to this way:
-
-    abc|abc|dea|abcabf|abcabcdg.
-
-    String 1 tests basic construction.
-    String 2 tests basic construction with repeats.
-    String 3 tests simple branching. 
-    String 4 tests branching using the suffix link technique.
-    String 5 tests additionally the skip-jump technique that must occur when a suffix traversal reaches the root node, but must traverse down several nodes before continuing the branching.
-    */
+     * TESTS
+     * 
+     * A sequence of strings comprise the tests, and each string derives from the
+     * former according to this way:
+     * 
+     * abc|abc|dea|abcabf|abcabcdg.
+     * 
+     * String 1 tests basic construction.
+     * String 2 tests basic construction with repeats.
+     * String 3 tests simple branching.
+     * String 4 tests branching using the suffix link technique.
+     * String 5 tests additionally the skip-jump technique that must occur when a
+     * suffix traversal reaches the root node, but must traverse down several nodes
+     * before continuing the branching.
+     */
 
     // String 1: abc
     // /abc
@@ -84,84 +88,93 @@ public class Test {
     // /fabcabcdg
     // /g
     public static final String s5Test = "/ab/c/ab/cd/eabcabfabcabcdg\n/ab/c/ab/cd/g\n/ab/c/ab/fabcabcdg\n/ab/c/d/eabcabfabcabcdg\n/ab/c/d/g\n/ab/fabcabcdg\n/b/c/ab/cd/eabcabfabcabcdg\n/b/c/ab/cd/g\n/b/c/ab/fabcabcdg\n/b/c/d/eabcabfabcabcdg\n/b/c/d/g\n/b/fabcabcdg\n/c/ab/cd/eabcabfabcabcdg\n/c/ab/cd/g\n/c/ab/fabcabcdg\n/c/d/eabcabfabcabcdg\n/c/d/g\n/d/eabcabfabcabcdg\n/d/g\n/eabcabfabcabcdg\n/fabcabcdg\n/g\n";
-    public static final String s5 = "abcabcdeabcabfabcabcdg"; // Check only node "traversal" after reaching root, proves correct sf
-                                          // extensions 2x.
+    public static final String s5 = "abcabcdeabcabfabcabcdg"; // Check only node "traversal" after reaching root, proves
+                                                              // correct sf
+    // extensions 2x.
 
     public static final String[] strings = new String[] { s1, s2, s3, s4, s5 };
-    public static final String[] tests   = new String[] { s1Test, s2Test, s3Test, s4Test, s5Test };
+    public static final String[] tests = new String[] { s1Test, s2Test, s3Test, s4Test, s5Test };
 
-    public static void testSuffixLinkCreationAndTraversal(NodeFactory factory) {
+    public static void testSuffixLinkCreationAndTraversal(NodeFactory factory, List<Boolean> results) {
         System.out.println("Logs for string, did it traverse the suffix links correctly for string:" + s5 + "?");
-        List<String>  logs = new ArrayList<>();
-    
+        List<String> logs = new ArrayList<>();
+
         // The string is: "abcabdeabdabfabcabcdg".
-        SuffixTreeBuilder.build(s5, factory, true, logs);
+        SuffixTreeBuilder.build(s5, 1, factory, true, logs);
         String[] traversalsToRoot = {
-            // The first traversal to extend "d". Reaches root each time
-            "true","true","true",
-            // The second traversal to exetnd "f", it reaches the root at the third time then reaches it each time.
-            "false","false","true","true","true",
-    
-            // The last traveral to extend "g", it similarly reaches the root at third time, then skips down 2 two nodes...
-            "false","false","true",
-            // then does another round. 
-            "false","false","true",
-            // then one last time to branch "g" from "dea..." and back to root (see drawings). 
-            "true"
+                // The first traversal to extend "d". Reaches root each time
+                "true", "true", "true",
+                // The second traversal to exetnd "f", it reaches the root at the third time
+                // then reaches it each time.
+                "false", "false", "true", "true", "true",
+
+                // The last traveral to extend "g", it similarly reaches the root at third time,
+                // then skips down 2 two nodes...
+                "false", "false", "true",
+                // then does another round.
+                "false", "false", "true",
+                // then one last time to branch "g" from "dea..." and back to root (see
+                // drawings).
+                "true"
         };
-    
+
         int j = 0;
         // System.out.println(String.join("\n", logs));
-        for (String log : logs)
-        {
-          if (log.equals("true") || log.equals("false"))
-          {
-              System.out.println(traversalsToRoot[j].equals(log));
-              j++;
-          }
+        for (String log : logs) {
+            if (log.equals("true") || log.equals("false")) {
+                boolean result = traversalsToRoot[j].equals(log);
+                System.out.println(result);
+
+                results.add(result);
+
+                j++;
+            }
         }
     }
-    public static void testTreeStructures(NodeFactory factory) {
+
+    public static void testTreeStructures(NodeFactory factory, List<Boolean> results) {
         System.out.println("Checking test trees' final structure:");
         for (int i = 0; i < strings.length; i++) {
             // System
-            //     .out
-            //     .println("String: " + TestCases.strings[i]);
-    
-            Node          root = SuffixTreeBuilder.build(strings[i], factory, false, null);
-            StringBuilder b    = new StringBuilder();
-    
-            suffixes(root, "", strings[i], b, false);
-    
-            System
-                .out
-                .println(b.toString().equals(tests[i]));
-    
+            // .out
+            // .println("String: " + TestCases.strings[i]);
+
+            Node root = SuffixTreeBuilder.build(strings[i], 1, factory, false, null);
+            StringBuilder b = new StringBuilder();
+
+            suffixes(root, "", Map.of(1, strings[i]), b, false);
+
+            boolean result = b.toString().equals(tests[i]);
+
+            System.out
+                    .println(result);
+
+            results.add(result);
+
             // System.out.println(b.toString());
-            // System.out.println(TestCases.tests[i]);
         }
     }
-    
+
     /*
-    Traverses the suffix tree.
+     * Traverses the suffix tree.
      */
-    // The String s must match the suffix tree, there is no test for this currently...
-    public static void suffixes(Node tree, String path, String s, StringBuilder builder, boolean verbose) {
+    // The String 's' must match the suffix tree, there is no test for this
+    // currently...
+    public static void suffixes(Node tree, String path, Map<Integer, String> strings, StringBuilder builder, boolean verbose) {
         if (tree == null) {
-            if (verbose)
-            {
+            if (verbose) {
                 System.out.println(path);
             }
             builder.append(path + "\n");
             return;
         }
-    
+
         for (Edge e : tree.getAllEdges()) {
             if (e == null) {
                 continue;
             }
-    
-            suffixes(e.child, path + "/" + s.substring(e.start, e.end.end), s, builder, verbose);
+
+            suffixes(e.child, path + "/" + strings.get(e.stringId).substring(e.start, e.end.end), strings, builder, verbose);
         }
     }
 }

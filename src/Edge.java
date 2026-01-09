@@ -7,10 +7,14 @@ public class Edge {
     public End end;
     public Node child;
 
+    public int stringId;
+
     public Edge(
             int start,
-            End end) {
+            End end,
+            int stringId) {
         this.start = start;
         this.end = end;
+        this.stringId = stringId;
     }
 }

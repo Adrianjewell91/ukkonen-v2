@@ -2,7 +2,6 @@
 /*
  * Represents either the root of the tree or an internal branch point.
  */
-
 import java.util.List;
 
 public interface Node {

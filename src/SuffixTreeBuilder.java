@@ -25,10 +25,8 @@ import java.util.*;
 * creation.
 */
 public class SuffixTreeBuilder {
-    /*
-     * nb. isDebug: will insert a certain logs if set.
-     */
-    public static Node build(String s, NodeFactory factory, boolean isDebug, List<String> logs) {
+
+    public static Node build(String s, int stringId, NodeFactory factory, boolean isDebug, List<String> logs) {
         /*
          * Create the root node.
          */
@@ -36,6 +34,14 @@ public class SuffixTreeBuilder {
         root.setSuffixLink(root);
         root.setIsRoot(true);
 
+        return build(s, stringId, factory, isDebug, logs, root);
+    }
+
+    /*
+     * nb. isDebug: will insert a certain logs if set.
+     */
+    public static Node build(String s, int stringId, NodeFactory factory, boolean isDebug, List<String> logs,
+            Node root) {
         /*
          * All terminal edges point to this gloabal end
          */
@@ -66,7 +72,6 @@ public class SuffixTreeBuilder {
              * Two cases:
              * 1. Not traversing an edge (guaranteed to be at the root node).
              * 2. Traversing an edge (happens during repeats in the string).
-             * 
              */
 
             /*
@@ -80,8 +85,8 @@ public class SuffixTreeBuilder {
                  * before.
                  */
                 if (currentNode.getEdge(c) == null) {
-                    Edge e = new Edge(i, globalEnd);
-                    currentNode.setEdge(c , e);
+                    Edge e = new Edge(i, globalEnd, stringId);
+                    currentNode.setEdge(c, e);
 
                     peg++;
                 }
@@ -163,11 +168,15 @@ public class SuffixTreeBuilder {
                          * children from the existing edge.
                          */
                         Node internalNode = factory.createNode();
-                        Edge split = new Edge(currentEdge.start + localCounter, currentEdge.end);
-                        Edge newEdge = new Edge(i, globalEnd);
+                        Edge split = new Edge(currentEdge.start + localCounter, currentEdge.end, stringId);
+                        Edge newEdge = new Edge(i, globalEnd, stringId);
 
                         internalNode.setEdge(s.charAt(currentEdge.start + localCounter), split);
                         internalNode.setEdge(c, newEdge);
+
+                        /*
+                         * Internal nodes be default point to the root unless otherwise modified later.
+                         */
                         internalNode.setSuffixLink(root);
 
                         split.child = currentEdge.child;
@@ -212,7 +221,7 @@ public class SuffixTreeBuilder {
                      * Create the new node at the root for the new character.
                      */
                     // technically duplicate of line ~224
-                    Edge e = new Edge(i, globalEnd);
+                    Edge e = new Edge(i, globalEnd, stringId);
                     currentNode.setEdge(c, e);
 
                     /*
