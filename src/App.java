@@ -84,40 +84,6 @@ public class App {
         results.add(result);
 
         /*
-         * Generalized suffix tree:
-         * 
-         * It's not really GST but also testing that repeats not starting at the
-         * beginning get handled correctly.
-         */
-        String gst1 = "abcabc$defdef#";
-        root = SuffixTreeBuilder.build(gst1, new MapNodeFactory(), false, null);
-
-        b = new StringBuilder();
-        Test.suffixes(root, "", gst1, b, false);
-
-        String gst1and2Expected = """
-                /abc/abc$defdef#
-                /abc/$defdef#
-                /bc/abc$defdef#
-                /bc/$defdef#
-                /c/abc$defdef#
-                /c/$defdef#
-                /#
-                /$defdef#
-                /def/#
-                /def/def#
-                /ef/#
-                /ef/def#
-                /f/#
-                /f/def#
-                """;
-
-        result = b.toString().equals(gst1and2Expected);
-        System.out.println(b.toString());
-
-        results.add(result);
-
-        /*
          * Do all tests pass?
          */
         System.out.println("Do all tests pass: " + !results.contains(false));

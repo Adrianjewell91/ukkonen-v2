@@ -91,8 +91,33 @@ public class Test {
                                                               // correct sf
     // extensions 2x.
 
-    public static final String[] strings = new String[] { s1, s2, s3, s4, s5 };
-    public static final String[] tests = new String[] { s1Test, s2Test, s3Test, s4Test, s5Test };
+    /*
+     * Generalized suffix tree:
+     * 
+     * It's not really GST but also testing that repeats not starting at the
+     * beginning get handled correctly.
+     */
+    public static final String gst1 = "abcabc$defdef#";
+
+    public static final String gst1and2Expected = """
+            /abc/abc$defdef#
+            /abc/$defdef#
+            /bc/abc$defdef#
+            /bc/$defdef#
+            /c/abc$defdef#
+            /c/$defdef#
+            /#
+            /$defdef#
+            /def/#
+            /def/def#
+            /ef/#
+            /ef/def#
+            /f/#
+            /f/def#
+            """;
+
+    public static final String[] strings = new String[] { s1, s2, s3, s4, s5, gst1 };
+    public static final String[] tests = new String[] { s1Test, s2Test, s3Test, s4Test, s5Test, gst1and2Expected };
 
     public static void testSuffixLinkCreationAndTraversal(NodeFactory factory, List<Boolean> results) {
         System.out.println("Logs for string, did it traverse the suffix links correctly for string:" + s5 + "?");
