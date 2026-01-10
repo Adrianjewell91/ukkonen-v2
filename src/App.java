@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class App {
     public static void main(String[] args) {
@@ -38,6 +37,10 @@ public class App {
         Test.testSuffixLinkCreationAndTraversal(new CharNodeFactory(), results);
         Test.testSuffixLinkCreationAndTraversal(new MapNodeFactory(), results);
 
+        Node root;
+        StringBuilder b;
+        boolean result;
+
         // A fun extra test for Node.edges length == 26:
         String test = "";
         for (char c : Test.s5.toCharArray()) {
@@ -45,9 +48,10 @@ public class App {
             test += next;
         }
         System.out.println(test);
-        Node root = SuffixTreeBuilder.build(test, 1, new CharNodeFactory(), false, null);
-        StringBuilder b = new StringBuilder();
-        Test.suffixes(root, "", Map.of(1, test), b, false);
+        b = new StringBuilder();
+        root = SuffixTreeBuilder.build(test, new CharNodeFactory(), false,
+                null);
+        Test.suffixes(root, "", test, b, false);
 
         String expected = """
                 /t
@@ -74,43 +78,42 @@ public class App {
                 /zy/x/zy/xw/vzyxzyuzyxzyxwt
                 """;
 
-        boolean result = b.toString().equals(expected);
+        result = b.toString().equals(expected);
         System.out.println(result);
 
         results.add(result);
 
         /*
          * Generalized suffix tree:
+         * 
+         * It's not really GST but also testing that repeats not starting at the
+         * beginning get handled correctly.
          */
-
-        String gst1 = "abcabc$";
-        String gst2 = "defdef%";
-
-        root = SuffixTreeBuilder.build(gst1, 1, new MapNodeFactory(), false, null);
-        root = SuffixTreeBuilder.build(gst2, 2, new MapNodeFactory(), false, null, root);
+        String gst1 = "abcabc$defdef#";
+        root = SuffixTreeBuilder.build(gst1, new MapNodeFactory(), false, null);
 
         b = new StringBuilder();
-        Test.suffixes(root, "", Map.of(1, gst1, 2, gst2), b, false);
+        Test.suffixes(root, "", gst1, b, false);
 
         String gst1and2Expected = """
-                /abc/abc$
-                /abc/$
-                /bc/abc$
-                /bc/$
-                /c/abc$
-                /c/$
-                /$
-                /def/def%
-                /def/%
-                /ef/def%
-                /ef/%
-                /%
-                /f/def%
-                /f/%
+                /abc/abc$defdef#
+                /abc/$defdef#
+                /bc/abc$defdef#
+                /bc/$defdef#
+                /c/abc$defdef#
+                /c/$defdef#
+                /#
+                /$defdef#
+                /def/#
+                /def/def#
+                /ef/#
+                /ef/def#
+                /f/#
+                /f/def#
                 """;
 
         result = b.toString().equals(gst1and2Expected);
-        System.out.println(result);
+        System.out.println(b.toString());
 
         results.add(result);
 

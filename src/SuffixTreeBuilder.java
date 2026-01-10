@@ -24,9 +24,20 @@ import java.util.*;
 * c) Traverse the branch points to avoid dfs path traversals during branch
 * creation.
 */
-public class SuffixTreeBuilder {
 
-    public static Node build(String s, int stringId, NodeFactory factory, boolean isDebug, List<String> logs) {
+/*
+Space complexity of GST:
+
+m + n vs m then n 
+m+n == O((n+m)^2)
+m then n == O(n^2 + m^2)
+which is theoretically equivalent 
+*/
+public class SuffixTreeBuilder {
+    /*
+     * nb. isDebug: will insert a certain logs if set.
+     */
+    public static Node build(String s, NodeFactory factory, boolean isDebug, List<String> logs) {
         /*
          * Create the root node.
          */
@@ -34,14 +45,6 @@ public class SuffixTreeBuilder {
         root.setSuffixLink(root);
         root.setIsRoot(true);
 
-        return build(s, stringId, factory, isDebug, logs, root);
-    }
-
-    /*
-     * nb. isDebug: will insert a certain logs if set.
-     */
-    public static Node build(String s, int stringId, NodeFactory factory, boolean isDebug, List<String> logs,
-            Node root) {
         /*
          * All terminal edges point to this gloabal end
          */
@@ -55,6 +58,9 @@ public class SuffixTreeBuilder {
 
         Node currentNode = root;
         Edge currentEdge = null;
+
+        //counter
+        int counter = 0;
 
         /*
          * It is required to understand that at each iteration, the
@@ -85,7 +91,7 @@ public class SuffixTreeBuilder {
                  * before.
                  */
                 if (currentNode.getEdge(c) == null) {
-                    Edge e = new Edge(i, globalEnd, stringId);
+                    Edge e = new Edge(i, globalEnd);
                     currentNode.setEdge(c, e);
 
                     peg++;
@@ -97,6 +103,7 @@ public class SuffixTreeBuilder {
                  */
                 else {
                     currentEdge = currentNode.getEdge(c);
+                    counter++;
                 }
             }
             /*
@@ -112,9 +119,11 @@ public class SuffixTreeBuilder {
                  * AND reached the end of edg, because otherwise i++ == move down the current
                  * edge.
                  */
-                if (c == s.charAt(i - peg) && (i - peg == currentEdge.end.end)) {
+                if (c == s.charAt(currentEdge.start + counter) && (currentEdge.start + counter == currentEdge.end.end)) {
+                // if (c == s.charAt(i - peg) && (i - peg) == currentEdge.end.end) {
                     currentNode = currentEdge.child;
                     currentEdge = currentNode.getEdge(c);
+                    counter = 1;
                 }
                 /*
                  * Option 2:
@@ -122,7 +131,8 @@ public class SuffixTreeBuilder {
                  * The next character in the suffix != the next character in the string,
                  * Therefore this is a branch point.
                  */
-                else if (c != s.charAt(i - peg)) {
+                else if (c != s.charAt(currentEdge.start + counter)) {
+                // else if (c != s.charAt(i - peg)) {
                     Node lastCreatedInternalNode = null;
                     /*
                      * LocalCounter is the distance between the current node and the branch point to
@@ -143,6 +153,7 @@ public class SuffixTreeBuilder {
                          */
                         if (currentNode.getIsRoot()) {
                             localCounter = i - peg;
+                            // not sure about these either...
                             currentEdge = currentNode.getEdge(s.charAt(i - localCounter));
 
                             while (localCounter > (currentEdge.end.end - currentEdge.start)) {
@@ -168,8 +179,8 @@ public class SuffixTreeBuilder {
                          * children from the existing edge.
                          */
                         Node internalNode = factory.createNode();
-                        Edge split = new Edge(currentEdge.start + localCounter, currentEdge.end, stringId);
-                        Edge newEdge = new Edge(i, globalEnd, stringId);
+                        Edge split = new Edge(currentEdge.start + localCounter, currentEdge.end);
+                        Edge newEdge = new Edge(i, globalEnd);
 
                         internalNode.setEdge(s.charAt(currentEdge.start + localCounter), split);
                         internalNode.setEdge(c, newEdge);
@@ -220,8 +231,8 @@ public class SuffixTreeBuilder {
                     /*
                      * Create the new node at the root for the new character.
                      */
-                    // technically duplicate of line ~224
-                    Edge e = new Edge(i, globalEnd, stringId);
+                    // technically duplicate of line ~88
+                    Edge e = new Edge(i, globalEnd);
                     currentNode.setEdge(c, e);
 
                     /*
@@ -236,8 +247,9 @@ public class SuffixTreeBuilder {
                      * This is an implementation complexity.
                      */
                     currentEdge = null;
+                    counter = 0;
                 }
-
+                else { counter++; }
                 /*
                  * There is an Option 3: Where the character are simply equal but this in
                  * implicit
