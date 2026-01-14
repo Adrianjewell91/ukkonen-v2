@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class App {
@@ -7,8 +8,10 @@ public class App {
         /*
          * Confirms structure.
          */
-        Test.testTreeStructures(new CharNodeFactory(), results);
-        Test.testTreeStructures(new MapNodeFactory(), results);
+        Test.testTreeStructures(new CharNodeFactory(), results,
+        Arrays.copyOfRange(Test.strings, 0, Test.strings.length - 1),
+        Arrays.copyOfRange(Test.tests, 0, Test.tests.length - 1));
+        Test.testTreeStructures(new MapNodeFactory(), results, Test.strings, Test.tests);
 
         /*
          * Confirms suffix link traversal during extensions of branch points.
@@ -37,55 +40,39 @@ public class App {
         Test.testSuffixLinkCreationAndTraversal(new CharNodeFactory(), results);
         Test.testSuffixLinkCreationAndTraversal(new MapNodeFactory(), results);
 
+        /* Debugging stuff */
         Node root;
         StringBuilder b;
         boolean result;
 
-        // A fun extra test for Node.edges length == 26:
-        String test = "";
-        for (char c : Test.s5.toCharArray()) {
-            char next = (char) ('z' - (c - 'a'));
-            test += next;
-        }
-        System.out.println(test);
+        // Test a long string:
+        String s = Test.gene.substring(0, 23) + "$";
+
         b = new StringBuilder();
-        root = SuffixTreeBuilder.build(test, new CharNodeFactory(), false,
-                null);
-        Test.suffixes(root, "", test, b, false);
+        root = SuffixTreeBuilder.build(s, new MapNodeFactory(), true, new ArrayList<>());
+        System.out.println(Util.countNodes(root));
 
-        String expected = """
-                /t
-                /uzyxzyxwt
-                /vzyxzyuzyxzyxwt
-                /w/t
-                /w/vzyxzyuzyxzyxwt
-                /x/w/t
-                /x/w/vzyxzyuzyxzyxwt
-                /x/zy/uzyxzyxwt
-                /x/zy/xw/t
-                /x/zy/xw/vzyxzyuzyxzyxwt
-                /y/uzyxzyxwt
-                /y/x/w/t
-                /y/x/w/vzyxzyuzyxzyxwt
-                /y/x/zy/uzyxzyxwt
-                /y/x/zy/xw/t
-                /y/x/zy/xw/vzyxzyuzyxzyxwt
-                /zy/uzyxzyxwt
-                /zy/x/w/t
-                /zy/x/w/vzyxzyuzyxzyxwt
-                /zy/x/zy/uzyxzyxwt
-                /zy/x/zy/xw/t
-                /zy/x/zy/xw/vzyxzyuzyxzyxwt
-                """;
+        Util.suffixes(root, "", s, b, false);
+        System.out.println(b.toString());
 
-        result = b.toString().equals(expected);
-        System.out.println(result);
-
-        results.add(result);
+        System.out.println(s);
 
         /*
          * Do all tests pass?
          */
         System.out.println("Do all tests pass: " + !results.contains(false));
+
+        for (int i = 0; i <= s.length(); i++) {
+            String suffix = s.substring(s.length() - i, s.length());
+            System.out.println(suffix);
+            System.out.println(Util.contains(root, s, suffix));
+            // System.out.println(!Util.contains(root, s, suffix + "*"));
+            results.add(Util.contains(root, s, suffix));
+
+            // Simple check against false positives:
+            results.add(!Util.contains(root, s, suffix + "*"));
+        }
+
+        System.out.println("All the suffixes present too: " + !results.contains(false));
     }
 }

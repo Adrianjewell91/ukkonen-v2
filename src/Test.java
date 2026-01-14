@@ -116,8 +116,36 @@ public class Test {
             /f/def#
             """;
 
-    public static final String[] strings = new String[] { s1, s2, s3, s4, s5, gst1 };
-    public static final String[] tests = new String[] { s1Test, s2Test, s3Test, s4Test, s5Test, gst1and2Expected };
+    public static final String s6 = generate();
+    public static final String s6Test = """
+                /t
+                /uzyxzyxwt
+                /vzyxzyuzyxzyxwt
+                /w/t
+                /w/vzyxzyuzyxzyxwt
+                /x/w/t
+                /x/w/vzyxzyuzyxzyxwt
+                /x/zy/uzyxzyxwt
+                /x/zy/xw/t
+                /x/zy/xw/vzyxzyuzyxzyxwt
+                /y/uzyxzyxwt
+                /y/x/w/t
+                /y/x/w/vzyxzyuzyxzyxwt
+                /y/x/zy/uzyxzyxwt
+                /y/x/zy/xw/t
+                /y/x/zy/xw/vzyxzyuzyxzyxwt
+                /zy/uzyxzyxwt
+                /zy/x/w/t
+                /zy/x/w/vzyxzyuzyxzyxwt
+                /zy/x/zy/uzyxzyxwt
+                /zy/x/zy/xw/t
+                /zy/x/zy/xw/vzyxzyuzyxzyxwt
+                """;
+
+    public static final String[] strings = new String[] { s1, s2, s3, s4, s5, s6, gst1 };
+    public static final String[] tests = new String[] { s1Test, s2Test, s3Test, s4Test, s5Test, s6Test, gst1and2Expected };
+
+    public static final String gene = "gatcctccatatacaacggtatctccacctcaggtttagatctcaacaacggaaccattgccgacatgagacagttaggtatcgtcgagagttacaagctaaaacgagcagtagtcagctctgcatctgaagccgctgaagttctactaagggtggataacatcatccgtgcaagaccaagaaccgccaatagacaacatatgtaacatatttaggatatacctcgaaaataataaaccgccacactgtcattattataattagaaacagaacgcaaaaattatccactatataattcaaagacgcgaaaaaaaaagaacaacgcgtcatagaacttttggcaattcgcgtcacaaataaattttggcaacttatgtttcctcttcgagcagtactcgagccctgtctcaagaatgtaataatacccatcgtaggtatggttaaagatagcatctccacaacctcaaagctccttgccgagagtcgccctcctttgtcgagtaattttcacttttcatatgagaacttattttcttattctttactctcacatcctgtagtgattgacactgcaacagccaccatcactagaagaacagaacaattacttaatagaaaaattatatcttcctcgaaacgatttcctgcttccaacatctacgtatatcaagaagcattcacttaccatgacacagcttcagatttcattattgctgacagctactatatcactactccatctagtagtggccacgccctatgaggcatatcctatcggaaaacaataccccccagtggcaagagtcaatgaatcgtttacatttcaaatttccaatgatacctataaatcgtctgtagacaagacagctcaaataacatacaattgcttcgacttaccgagctggctttcgtttgactctagttctagaacgttctcaggtgaaccttcttctgacttactatctgatgcgaacaccacgttgtatttcaatgtaatactcgagggtacggactctgccgacagcacgtctttgaacaatacataccaatttgttgttacaaaccgtccatccatctcgctatcgtcagatttcaatctattggcgttgttaaaaaactatggttatactaacggcaaaaacgctctgaaactagatcctaatgaagtcttcaacgtgacttttgaccgttcaatgttcactaacgaagaatccattgtgtcgtattacggacgttctcagttgtataatgcgccgttacccaattggctgttcttcgattctggcgagttgaagtttactgggacggcaccggtgataaactcggcgattgctccagaaacaagctacagttttgtcatcatcgctacagacattgaaggattttctgccgttgaggtagaattcgaattagtcatcggggctcaccagttaactacctctattcaaaatagtttgataatcaacgttactgacacaggtaacgtttcatatgacttacctctaaactatgtttatctcgatgacgatcctatttcttctgataaattgggttctataaacttattggatgctccagactgggtggcattagataatgctaccatttccgggtctgtcccagatgaattactcggtaagaactccaatcctgccaatttttctgtgtccatttatgatacttatggtgatgtgatttatttcaacttcgaagttgtctccacaacggatttgtttgccattagttctcttcccaatattaacgctacaaggggtgaatggttctcctactattttttgccttctcagtttacagactacgtgaatacaaacgtttcattagagtttactaattcaagccaagaccatgactgggtgaaattccaatcatctaatttaacattagctggagaagtgcccaagaatttcgacaagctttcattaggtttgaaagcgaaccaaggttcacaatctcaagagctatattttaacatcattggcatggattcaaagataactcactcaaaccacagtgcgaatgcaacgtccacaagaagttctcaccactccacctcaacaagttcttacacatcttctacttacactgcaaaaatttcttctacctccgctgctgctacttcttctgctccagcagcgctgccagcagccaataaaacttcatctcacaataaaaaagcagtagcaattgcgtgcggtgttgctatcccattaggcgttatcctagtagctctcatttgcttcctaatattctggagacgcagaagggaaaatccagacgatgaaaacttaccgcatgctattagtggacctgatttgaataatcctgcaaataaaccaaatcaagaaaacgctacacctttgaacaacccctttgatgatgatgcttcctcgtacgatgatacttcaatagcaagaagattggctgctttgaacactttgaaattggataaccactctgccactgaatctgatatttccagcgtggatgaaaagagagattctctatcaggtatgaatacatacaatgatcagttccaatcccaaagtaaagaagaattattagcaaaacccccagtacagcctccagagagcccgttctttgacccacagaataggtcttcttctgtgtatatggatagtgaaccagcagtaaataaatcctggcgatatactggcaacctgtcaccagtctctgatattgtcagagacagttacggatcacaaaaaactgttgatacagaaaaacttttcgatttagaagcaccagagaaggaaaaacgtacgtcaagggatgtcactatgtcttcactggacccttggaacagcaatattagcccttctcccgtaagaaaatcagtaacaccatcaccatataacgtaacgaagcatcgtaaccgccacttacaaaatattcaagactctcaaagcggtaaaaacggaatcactcccacaacaatgtcaacttcatcttctgacgattttgttccggttaaagatggtgaaaatttttgctgggtccatagcatggaaccagacagaagaccaagtaagaaaaggttagtagatttttcaaataagagtaatgtcaatgttggtcaagttaaggacattcacggacgcatcccagaaatgctgtgattatacgcaacgatattttgcttaattttattttcctgttttattttttattagtggtttacagataccctatattttatttagtttttatacttagagacatttaattttaattccattcttcaaatttcatttttgcacttaaaacaaagatccaaaaatgctctcgccctcttcatattgagaatacactccattcaaaattttgtcgtcaccgctgattaatttttcactaaactgatgaataatcaaaggccccacgtcagaaccgactaaagaagtgagttttattttaggaggttgaaaaccattattgtctggtaaattttcatcttcttgacatttaacccagtttgaatccctttcaatttctgctttttcctccaaactatcgaccctcctgtttctgtccaacttatgtcctagttccaattcgatcgcattaataactgcttcaaatgttattgtgtcatcgttgactttaggtaatttctccaaatgcataatcaaactatttaaggaagatcggaattcgtcgaacacttcagtttccgtaatgatctgatcgtctttatccacatgttgtaattcactaaaatctaaaacgtatttttcaatgcataaatcgttctttttattaataatgcagatggaaaatctgtaaacgtgcgttaatttagaaagaacatccagtataagttcttctatatagtcaattaaagcaggatgcctattaatgggaacgaactgcggcaagttgaatgactggtaagtagtgtagtcgaatgactgaggtgggtatacatttctataaaataaaatcaaattaatgtagcattttaagtataccctcagccacttctctacccatctattcataaagctgacgcaacgattactattttttttttcttcttggatctcagtcgtcgcaaaaacgtataccttctttttccgaccttttttttagctttctggaaaagtttatattagttaaacagggtctagtcttagtgtgaaagctagtggtttcgattgactgatattaagaaagtggaaattaaattagtagtgtagacgtatatgcatatgtatttctcgcctgtttatgtttctacgtacttttgatttatagcaaggggaaaagaaatacatactattttttggtaaaggtgaaagcataatgtaaaagctagaataaaatggacgaaataaagagaggcttagttcatcttttttccaaaaagcacccaatgataataactaaaatgaaaaggatttgccatctgtcagcaacatcagttgtgtgagcaataataaaatcatcacctccgttgcctttagcgcgtttgtcgtttgtatcttccgtaattttagtcttatcaatgggaatcataaattttccaatgaattagcaatttcgtccaattctttttgagcttcttcatatttgctttggaattcttcgcacttcttttcccattcatctctttcttcttccaaagcaacgatccttctacccatttgctcagagttcaaatcggcctctttcagtttatccattgcttccttcagtttggcttcactgtcttctagctgttgttctagatcctggtttttcttggtgtagttctcattattagatctcaagttattggagtcttcagccaattgctttgtatcagacaattgactctctaacttctccacttcactgtcgagttgctcgtttttagcggacaaagatttaatctcgttttctttttcagtgttagattgctctaattctttgagctgttctctcagctcctcatatttttcttgccatgactcagattctaattttaagctattcaatttctctttgatc$";
 
     public static void testSuffixLinkCreationAndTraversal(NodeFactory factory, List<Boolean> results) {
         System.out.println("Logs for string, did it traverse the suffix links correctly for string:" + s5 + "?");
@@ -159,10 +187,22 @@ public class Test {
 
         } catch (Exception e) {
             e.printStackTrace();
+            results.add(false);
         }
     }
 
-    public static void testTreeStructures(NodeFactory factory, List<Boolean> results) {
+    private static String generate() {
+        // A fun extra test for Node.edges length == 26:
+        String test = "";
+        for (char c : Test.s5.toCharArray()) {
+            char next = (char) ('z' - (c - 'a'));
+            test += next;
+        }
+
+        return test;
+    }
+
+    public static void testTreeStructures(NodeFactory factory, List<Boolean> results, String[] strings, String[] tests) {
         System.out.println("Checking test trees' final structure:");
 
         for (int i = 0; i < strings.length; i++) {
@@ -174,7 +214,7 @@ public class Test {
                 Node root = SuffixTreeBuilder.build(strings[i], factory, false, null);
                 StringBuilder b = new StringBuilder();
 
-                suffixes(root, "", strings[i], b, false);
+                Util.suffixes(root, "", strings[i], b, false);
 
                 boolean result = b.toString().equals(tests[i]);
 
@@ -183,35 +223,14 @@ public class Test {
 
                 results.add(result);
 
-                System.out.println(b.toString());
+                // System.out.println(b.toString());
             } catch (Exception e) {
                 // System.out.println(e.toString());
 
                 e.printStackTrace();
-            }
-        }
-    }
 
-    /*
-     * Traverses the suffix tree.
-     */
-    // The String 's' must match the suffix tree, there is no test for this
-    // currently...
-    public static void suffixes(Node tree, String path, String s, StringBuilder builder, boolean verbose) {
-        if (tree == null) {
-            if (verbose) {
-                System.out.println(path);
+                results.add(false);
             }
-            builder.append(path + "\n");
-            return;
-        }
-
-        for (Edge e : tree.getAllEdges()) {
-            if (e == null) {
-                continue;
-            }
-
-            suffixes(e.child, path + "/" + s.substring(e.start, e.end.end), s, builder, verbose);
         }
     }
 }

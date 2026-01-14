@@ -59,16 +59,28 @@ public class SuffixTreeBuilder {
         Node currentNode = root;
         Edge currentEdge = null;
 
-        //counter
+        // counter
         int counter = 0;
 
         /*
          * It is required to understand that at each iteration, the
          * implicit suffix tree exists for 0..i.
          */
-        for (int i = 0; i < s.length(); i++) {
-
+        int i = 0;
+        while (i < s.length()) {
             char c = s.charAt(i);
+            
+            if (currentNode.getIsRoot() == false && currentEdge == null)
+            {
+                System.out.println("bug");
+                break;
+            }
+
+            if (isDebug == true) {
+                StringBuilder b = new StringBuilder();
+                Util.suffixes(root, "", s, b, false);
+                System.out.println(b.toString());
+            }
 
             if (isDebug == true) {
                 logs.add("Inserting char " + c + ".");
@@ -105,25 +117,32 @@ public class SuffixTreeBuilder {
                     currentEdge = currentNode.getEdge(c);
                     counter++;
                 }
+
+                i++;
             }
             /*
              * Case 2. Traversing an edge...
              */
             else {
+                System.out.println(currentEdge.start);
                 /*
                  * Option 1:
                  * 
                  * The next character already exists while traversing the string (due to
                  * repeats).
                  * 
-                 * AND reached the end of edg, because otherwise i++ == move down the current
+                 * AND reached the end of edge, because otherwise i++ == move down the current
                  * edge.
                  */
-                if (c == s.charAt(currentEdge.start + counter) && (currentEdge.start + counter == currentEdge.end.end)) {
-                // if (c == s.charAt(i - peg) && (i - peg) == currentEdge.end.end) {
+                if (
+                    currentEdge.child != null 
+                    && currentEdge.start + counter == currentEdge.end.end
+                    && currentEdge.child.getEdge(c) != null
+                    ) {
                     currentNode = currentEdge.child;
                     currentEdge = currentNode.getEdge(c);
                     counter = 1;
+                    i++;
                 }
                 /*
                  * Option 2:
@@ -132,7 +151,6 @@ public class SuffixTreeBuilder {
                  * Therefore this is a branch point.
                  */
                 else if (c != s.charAt(currentEdge.start + counter)) {
-                // else if (c != s.charAt(i - peg)) {
                     Node lastCreatedInternalNode = null;
                     /*
                      * LocalCounter is the distance between the current node and the branch point to
@@ -140,10 +158,14 @@ public class SuffixTreeBuilder {
                      * 
                      * It works because the start-end indexes of the the edges being traversed are
                      * guaranteed to be contiguous.
-                     * That is because when a set of edges are traversed, it continues from idx 0
+                     * That is because when a set of edges are traversed, the iteration continues
+                     * from idx 0
                      * until it reaches a non-matching character.
                      */
-                    int localCounter = (i - peg) - currentEdge.start;
+                    // int localCounter = (i - peg) - currentEdge.start;
+                    int localCounter = counter;
+
+                    boolean resetEdgeAndCounter = true;
 
                     while (peg < i) {
                         /*
@@ -153,11 +175,16 @@ public class SuffixTreeBuilder {
                          */
                         if (currentNode.getIsRoot()) {
                             localCounter = i - peg;
-                            // not sure about these either...
                             currentEdge = currentNode.getEdge(s.charAt(i - localCounter));
 
                             while (localCounter > (currentEdge.end.end - currentEdge.start)) {
                                 localCounter -= currentEdge.end.end - currentEdge.start;
+
+                                // if this happens, then there is a bug
+                                // if (currentEdge.child.getEdge(s.charAt(i - localCounter)) == null) {
+                                    // same issue looks like nodes are being re assigned which is not good.
+                                    // break;
+                                // }
                                 currentNode = currentEdge.child;
                                 currentEdge = currentNode.getEdge(s.charAt(i - localCounter));
                             }
@@ -173,46 +200,69 @@ public class SuffixTreeBuilder {
                              */
                             currentEdge = currentNode.getEdge(s.charAt(i - localCounter));
                         }
-
                         /*
                          * Create the new branch point, which == a new internal node, and copying over
                          * children from the existing edge.
                          */
-                        Node internalNode = factory.createNode();
-                        Edge split = new Edge(currentEdge.start + localCounter, currentEdge.end);
-                        Edge newEdge = new Edge(i, globalEnd);
+                        if (
+                            currentEdge.end.end - currentEdge.start == 1
+                            && currentEdge.child != null
+                            && currentEdge.child.getEdge(c) != null 
+                        ) {
+                            // but this means the suffix is already there so 
+                            // so we would want to terminate here and continue onward 
+                            // to the next character.
 
-                        internalNode.setEdge(s.charAt(currentEdge.start + localCounter), split);
-                        internalNode.setEdge(c, newEdge);
-
-                        /*
-                         * Internal nodes be default point to the root unless otherwise modified later.
-                         */
-                        internalNode.setSuffixLink(root);
-
-                        split.child = currentEdge.child;
-
-                        currentEdge.child = internalNode;
-                        currentEdge.end = new End(currentEdge.start + localCounter);
-
-                        /*
-                         * Create the suffix link.
-                         */
-                        if (lastCreatedInternalNode == null) {
-                            lastCreatedInternalNode = internalNode;
-                        } else {
-                            lastCreatedInternalNode.setSuffixLink(internalNode);
-                            lastCreatedInternalNode = internalNode;
+                            // no suffix traversal
+                            // no peg ++ 
+                            // break; 
+                            resetEdgeAndCounter = false;
+                            break;
                         }
+                        else if (
+                            currentEdge.end.end - currentEdge.start == 1
+                            && currentEdge.child != null
+                        )
+                        {
+                            Edge newEdge = new Edge(i, globalEnd);
+                            currentEdge.child.setEdge(c, newEdge);
+                        }
+                        else {
+                            Node internalNode = factory.createNode();
+                            Edge split = new Edge(currentEdge.start + localCounter, currentEdge.end);
+                            Edge newEdge = new Edge(i, globalEnd);
 
-                        /*
-                         * nb.
-                         * Reset the last created internal node if the traversal reaches the root,
-                         * because each link of suffixes must terminate at the root, which means
-                         * traversing down from the root starts a "new" set of links.
-                         */
-                        if (currentNode.getSuffixLink().getIsRoot() && !currentNode.getIsRoot()) {
-                            lastCreatedInternalNode = null;
+                            internalNode.setEdge(s.charAt(currentEdge.start + localCounter), split);
+                            internalNode.setEdge(c, newEdge);
+
+                            /*
+                             * Internal nodes be default point to the root unless otherwise modified later.
+                             */
+                            internalNode.setSuffixLink(root);
+
+                            split.child = currentEdge.child;
+
+                            currentEdge.child = internalNode;
+                            currentEdge.end = new End(currentEdge.start + localCounter);
+
+                            /*
+                             * Create the suffix link.
+                             */
+                            if (lastCreatedInternalNode == null) {
+                                lastCreatedInternalNode = internalNode;
+                            } else {
+                                lastCreatedInternalNode.setSuffixLink(internalNode);
+                                lastCreatedInternalNode = internalNode;
+                            }
+                            /*
+                             * nb.
+                             * Reset the last created internal node if the traversal reaches the root,
+                             * because each link of suffixes must terminate at the root, which means
+                             * traversing down from the root starts a "new" set of links.
+                             */
+                            if (currentNode.getSuffixLink().getIsRoot() && !currentNode.getIsRoot()) {
+                                lastCreatedInternalNode = null;
+                            }
                         }
 
                         /*
@@ -229,32 +279,33 @@ public class SuffixTreeBuilder {
                     }
 
                     /*
-                     * Create the new node at the root for the new character.
-                     */
-                    // technically duplicate of line ~88
-                    Edge e = new Edge(i, globalEnd);
-                    currentNode.setEdge(c, e);
-
-                    /*
-                     * Essentially: the next possible peg will be i+1 because at i+1 there might be
-                     * a repeat and so the peg indeed gets held at i+1.
-                     */
-                    peg++;
-
-                    /*
                      * Reset the edge.
                      * 
                      * This is an implementation complexity.
                      */
-                    currentEdge = null;
-                    counter = 0;
+                    if(resetEdgeAndCounter)
+                    {
+                        currentEdge = null;
+                        counter = 0;
+
+                    }
+
+                    /*
+                     * Continue to next loop, essentially the same character but now it's fresh
+                     * start,
+                     * Therefore also do not increment global end.
+                     */
+                    continue;
                 }
-                else { counter++; }
                 /*
                  * There is an Option 3: Where the character are simply equal but this in
                  * implicit
                  * because i++ == an increment down the edge.
                  */
+                else {
+                    i++;
+                    counter++;
+                }
             }
 
             /*
