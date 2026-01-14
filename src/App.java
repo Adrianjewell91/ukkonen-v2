@@ -43,19 +43,18 @@ public class App {
         /* Debugging stuff */
         Node root;
         StringBuilder b;
-        boolean result;
 
         // Test a long string:
-        String s = Test.gene.substring(0, 110) + "$";
+        String s = Test.gene.substring(0, Test.gene.length()) + "$";
 
         b = new StringBuilder();
-        root = SuffixTreeBuilder.build(s, new MapNodeFactory(), true, new ArrayList<>());
+        root = SuffixTreeBuilder.build(s, new MapNodeFactory(), false, new ArrayList<>());
         System.out.println(Util.countNodes(root));
 
         Util.suffixes(root, "", s, b, false);
-        System.out.println(b.toString());
+        // System.out.println(b.toString());
 
-        System.out.println(s);
+        // System.out.println(s);
 
         /*
          * Do all tests pass?
@@ -69,10 +68,15 @@ public class App {
             // System.out.println(!Util.contains(root, s, suffix + "*"));
             results.add(Util.contains(root, s, suffix));
 
+            if (Util.contains(root, s, suffix) == false)
+            {
+                System.out.println(suffix);
+            }
+
             // Simple check against false positives:
             results.add(!Util.contains(root, s, suffix + "*"));
         }
 
-        System.out.println("All the suffixes present too: " + !results.contains(false));
+        System.out.println("All the suffixes for the gene present too: " + !results.contains(false));
     }
 }

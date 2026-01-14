@@ -85,6 +85,7 @@ public class SuffixTreeBuilder {
                 } catch (Exception e)
                 {
                     System.out.println("ERROR");
+                    throw e;
                 }
             }
 
@@ -205,13 +206,25 @@ public class SuffixTreeBuilder {
                              * manipulated during the suffix link traversal.
                              */
                             currentEdge = currentNode.getEdge(s.charAt(i - localCounter));
+
+                            while (localCounter > (currentEdge.end.end - currentEdge.start)) {
+                                localCounter -= currentEdge.end.end - currentEdge.start;
+
+                                // if this happens, then there is a bug
+                                // if (currentEdge.child.getEdge(s.charAt(i - localCounter)) == null) {
+                                    // same issue looks like nodes are being re assigned which is not good.
+                                    // break;
+                                // }
+                                currentNode = currentEdge.child;
+                                currentEdge = currentNode.getEdge(s.charAt(i - localCounter));
+                            }
                         }
                         /*
                          * Create the new branch point, which == a new internal node, and copying over
                          * children from the existing edge.
                          */
                         if (
-                            currentEdge.end.end - currentEdge.start == 1
+                            currentEdge.start + localCounter == currentEdge.end.end
                             && currentEdge.child != null
                             && currentEdge.child.getEdge(c) != null 
                         ) {
@@ -233,7 +246,7 @@ public class SuffixTreeBuilder {
                             break;
                         }
                         else if (
-                            currentEdge.end.end - currentEdge.start == 1
+                            currentEdge.start + localCounter == currentEdge.end.end
                             && currentEdge.child != null
                         )
                         {
@@ -242,6 +255,11 @@ public class SuffixTreeBuilder {
                         }
                         else {
                             Node internalNode = factory.createNode();
+                            
+                            if (currentEdge.start + localCounter == 40 && currentEdge.end.end == 39)
+                            {
+                                System.out.print("found");
+                            }
                             Edge split = new Edge(currentEdge.start + localCounter, currentEdge.end);
                             Edge newEdge = new Edge(i, globalEnd);
 

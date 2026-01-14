@@ -39,7 +39,7 @@ public class Util {
     
         Queue<Node> q = new LinkedList<>();
     
-        if (current != null) {
+        while (current != null) {
     
             for (Edge e : current.getAllEdges()) {
                 if (e.child != null) {
@@ -73,7 +73,14 @@ public class Util {
                 continue;
             }
     
-            suffixes(e.child, path + "/" + s.substring(e.start, e.end.end), s, builder, verbose);
+            try 
+            {
+                suffixes(e.child, path + "/" + s.substring(e.start, e.end.end), s, builder, verbose);
+            } catch (Exception err)
+            {
+                System.out.println("Error in traversing");
+                throw err;
+            }
         }
     }
     
