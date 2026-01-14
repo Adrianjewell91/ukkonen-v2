@@ -154,7 +154,7 @@ public class Test {
             List<String> logs = new ArrayList<>();
 
             // The string is: "abcabdeabdabfabcabcdg".
-            SuffixTreeBuilder.build(s5, factory, true, logs);
+            SuffixTreeBuilder.build(s5, factory, false, logs);
             String[] traversalsToRoot = {
                     // The first traversal to extend "d". Reaches root each time
                     "true", "true", "true",

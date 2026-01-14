@@ -69,9 +69,8 @@ public class SuffixTreeBuilder {
         int i = 0;
         while (i < s.length()) {
             char c = s.charAt(i);
-            
-            if (currentNode.getIsRoot() == false && currentEdge == null)
-            {
+
+            if (currentNode.getIsRoot() == false && currentEdge == null) {
                 System.out.println("bug");
                 break;
             }
@@ -82,8 +81,7 @@ public class SuffixTreeBuilder {
                     Util.suffixes(root, "", s, b, false);
                     System.out.println(b.toString());
 
-                } catch (Exception e)
-                {
+                } catch (Exception e) {
                     System.out.println("ERROR");
                     throw e;
                 }
@@ -130,7 +128,7 @@ public class SuffixTreeBuilder {
             /*
              * Case 2. Traversing an edge...
              */
-            else {
+            else if (c != s.charAt(currentEdge.start + counter)) {
                 // System.out.println(currentEdge.start);
                 /*
                  * Option 1:
@@ -141,204 +139,164 @@ public class SuffixTreeBuilder {
                  * AND reached the end of edge, because otherwise i++ == move down the current
                  * edge.
                  */
-                if (
-                    currentEdge.child != null 
-                    && currentEdge.start + counter == currentEdge.end.end
-                    && currentEdge.child.getEdge(c) != null
-                    ) {
-                    currentNode = currentEdge.child;
-                    currentEdge = currentNode.getEdge(c);
-                    counter = 1;
-                    i++;
-                }
+                Node lastCreatedInternalNode = null;
                 /*
-                 * Option 2:
+                 * counter is the distance between the current node and the branch point to
+                 * be created.
                  * 
-                 * The next character in the suffix != the next character in the string,
-                 * Therefore this is a branch point.
+                 * It works because the start-end indexes of the the edges being traversed are
+                 * guaranteed to be contiguous.
+                 * That is because when a set of edges are traversed, the iteration continues
+                 * from idx 0
+                 * until it reaches a non-matching character.
                  */
-                else if (c != s.charAt(currentEdge.start + counter)) {
-                    Node lastCreatedInternalNode = null;
+                // int localCounter = counter;
+
+                boolean resetEdgeAndCounter = true;
+
+                while (peg < i) {
                     /*
-                     * LocalCounter is the distance between the current node and the branch point to
-                     * be created.
+                     * For when the suffix link traversal returns to the root but requires skipping
+                     * down to a deeper branch node.
                      * 
-                     * It works because the start-end indexes of the the edges being traversed are
-                     * guaranteed to be contiguous.
-                     * That is because when a set of edges are traversed, the iteration continues
-                     * from idx 0
-                     * until it reaches a non-matching character.
+                     * Skip-jump down the string and nodes, if necessary.
+                     * It happens when the counter indicates that to continue the branching, one
+                     * much skip down the string to a lower node.
+                     * 
                      */
-                    // int localCounter = (i - peg) - currentEdge.start;
-                    int localCounter = counter;
+                    if (currentNode.getIsRoot()) {
+                        counter = i - peg;
+                    }
 
-                    boolean resetEdgeAndCounter = true;
+                    /*
+                     * but i-counter also works because: counter is the distance from the
+                     * currentNode,
+                     * and since i is the current character, it is guaranteed that i-counter
+                     * will be the first
+                     * character in the desired edge, and therefore in all the edges to be
+                     * manipulated during the suffix link traversal.
+                     */
+                    currentEdge = currentNode.getEdge(s.charAt(i - counter));
 
-                    while (peg < i) {
+                    while (counter > (currentEdge.end.end - currentEdge.start)) {
+                        counter -= currentEdge.end.end - currentEdge.start;
+
+                        // if this happens, then there is a bug
+                        // if (currentEdge.child.getEdge(s.charAt(i - counter)) == null) {
+                        // same issue looks like nodes are being re assigned which is not good.
+                        // break;
+                        // }
+                        currentNode = currentEdge.child;
+                        currentEdge = currentNode.getEdge(s.charAt(i - counter));
+                    }
+
+                    /*
+                     * Check if one is simply at the end of a edge,
+                     * even if the 'c' != next char, another branch might contain it, in this case
+                     * continue down that edge..
+                     */
+                    if (currentEdge.start + counter == currentEdge.end.end
+                            && currentEdge.child != null
+                            && currentEdge.child.getEdge(c) != null) {
+
+                        resetEdgeAndCounter = false;
+
+                        currentNode = currentEdge.child;
+                        currentEdge = currentNode.getEdge(c);
+                        counter = 1;
+                        i++;
+                        break;
+                    } else if (currentEdge.start + counter == currentEdge.end.end
+                            && currentEdge.child != null) {
+
+                        Edge newEdge = new Edge(i, globalEnd);
+                        currentEdge.child.setEdge(c, newEdge);
+                    }
+                    /*
+                     * Create the new branch point, which == a new internal node, and copying over
+                     * children from the existing edge.
+                     */
+                    else {
+                        Node internalNode = factory.createNode();
+
+                        // if (currentEdge.start + counter == 40 && currentEdge.end.end == 39)
+                        // {
+                        // System.out.print("found");
+                        // }
+                        Edge split = new Edge(currentEdge.start + counter, currentEdge.end);
+                        Edge newEdge = new Edge(i, globalEnd);
+
+                        internalNode.setEdge(s.charAt(currentEdge.start + counter), split);
+                        internalNode.setEdge(c, newEdge);
+
                         /*
-                         * Skip-jump down the string and nodes, if necessary.
-                         * It happens when the gblCounter indicates that to continue the branching, one
-                         * much skip down the string to a lower node.
+                         * Internal nodes be default point to the root unless otherwise modified later.
                          */
-                        if (currentNode.getIsRoot()) {
-                            localCounter = i - peg;
-                            currentEdge = currentNode.getEdge(s.charAt(i - localCounter));
+                        internalNode.setSuffixLink(root);
 
-                            while (localCounter > (currentEdge.end.end - currentEdge.start)) {
-                                localCounter -= currentEdge.end.end - currentEdge.start;
+                        split.child = currentEdge.child;
 
-                                // if this happens, then there is a bug
-                                // if (currentEdge.child.getEdge(s.charAt(i - localCounter)) == null) {
-                                    // same issue looks like nodes are being re assigned which is not good.
-                                    // break;
-                                // }
-                                currentNode = currentEdge.child;
-                                currentEdge = currentNode.getEdge(s.charAt(i - localCounter));
-                            }
+                        currentEdge.child = internalNode;
+                        currentEdge.end = new End(currentEdge.start + counter);
+
+                        /*
+                         * Create the suffix link.
+                         */
+                        if (lastCreatedInternalNode == null) {
+                            lastCreatedInternalNode = internalNode;
                         } else {
-                            // current edge.start would work here too,
-                            /*
-                             * but i-localCounter also works because: localCounter is the distance from the
-                             * currentNode,
-                             * and since i is the current character, it is guaranteed that i-localCounter
-                             * will be the first
-                             * character in the desired edge, and therefore in all the edges to be
-                             * manipulated during the suffix link traversal.
-                             */
-                            currentEdge = currentNode.getEdge(s.charAt(i - localCounter));
-
-                            while (localCounter > (currentEdge.end.end - currentEdge.start)) {
-                                localCounter -= currentEdge.end.end - currentEdge.start;
-
-                                // if this happens, then there is a bug
-                                // if (currentEdge.child.getEdge(s.charAt(i - localCounter)) == null) {
-                                    // same issue looks like nodes are being re assigned which is not good.
-                                    // break;
-                                // }
-                                currentNode = currentEdge.child;
-                                currentEdge = currentNode.getEdge(s.charAt(i - localCounter));
-                            }
+                            lastCreatedInternalNode.setSuffixLink(internalNode);
+                            lastCreatedInternalNode = internalNode;
                         }
                         /*
-                         * Create the new branch point, which == a new internal node, and copying over
-                         * children from the existing edge.
+                         * nb.
+                         * Reset the last created internal node if the traversal reaches the root,
+                         * because each link of suffixes must terminate at the root, which means
+                         * traversing down from the root starts a "new" set of links.
                          */
-                        if (
-                            currentEdge.start + localCounter == currentEdge.end.end
-                            && currentEdge.child != null
-                            && currentEdge.child.getEdge(c) != null 
-                        ) {
-                            // but this means the suffix is already there so 
-                            // so we would want to terminate here and continue onward 
-                            // to the next character.
-
-                            // no suffix traversal
-                            // no peg ++ 
-                            // break; 
-                            resetEdgeAndCounter = false;
-
-                            
-                            currentNode = currentEdge.child;
-                            currentEdge = currentNode.getEdge(c);
-                            counter = 1;
-                            i++;
-                            // i++;
-                            break;
+                        if (currentNode.getSuffixLink().getIsRoot() && !currentNode.getIsRoot()) {
+                            lastCreatedInternalNode = null;
                         }
-                        else if (
-                            currentEdge.start + localCounter == currentEdge.end.end
-                            && currentEdge.child != null
-                        )
-                        {
-                            Edge newEdge = new Edge(i, globalEnd);
-                            currentEdge.child.setEdge(c, newEdge);
-                        }
-                        else {
-                            Node internalNode = factory.createNode();
-                            
-                            if (currentEdge.start + localCounter == 40 && currentEdge.end.end == 39)
-                            {
-                                System.out.print("found");
-                            }
-                            Edge split = new Edge(currentEdge.start + localCounter, currentEdge.end);
-                            Edge newEdge = new Edge(i, globalEnd);
-
-                            internalNode.setEdge(s.charAt(currentEdge.start + localCounter), split);
-                            internalNode.setEdge(c, newEdge);
-
-                            /*
-                             * Internal nodes be default point to the root unless otherwise modified later.
-                             */
-                            internalNode.setSuffixLink(root);
-
-                            split.child = currentEdge.child;
-
-                            currentEdge.child = internalNode;
-                            currentEdge.end = new End(currentEdge.start + localCounter);
-
-                            /*
-                             * Create the suffix link.
-                             */
-                            if (lastCreatedInternalNode == null) {
-                                lastCreatedInternalNode = internalNode;
-                            } else {
-                                lastCreatedInternalNode.setSuffixLink(internalNode);
-                                lastCreatedInternalNode = internalNode;
-                            }
-                            /*
-                             * nb.
-                             * Reset the last created internal node if the traversal reaches the root,
-                             * because each link of suffixes must terminate at the root, which means
-                             * traversing down from the root starts a "new" set of links.
-                             */
-                            if (currentNode.getSuffixLink().getIsRoot() && !currentNode.getIsRoot()) {
-                                lastCreatedInternalNode = null;
-                            }
-                        }
-
-                        /*
-                         * Traverse the suffix link.
-                         */
-                        currentNode = currentNode.getSuffixLink();
-
-                        if (isDebug == true) {
-                            logs.add("Traversed to a Suffix Link. Is it to the root?");
-                            logs.add(String.valueOf(currentNode.getIsRoot()));
-                        }
-
-                        peg++;
                     }
 
                     /*
-                     * Reset the edge.
-                     * 
-                     * This is an implementation complexity.
+                     * Traverse the suffix link.
                      */
-                    if(resetEdgeAndCounter)
-                    {
-                        currentEdge = null;
-                        counter = 0;
+                    currentNode = currentNode.getSuffixLink();
+
+                    if (isDebug == true) {
+                        logs.add("Traversed to a Suffix Link. Is it to the root?");
+                        logs.add(String.valueOf(currentNode.getIsRoot()));
                     }
 
-                    /*
-                     * Continue to next loop, essentially the same character but now it's fresh
-                     * start,
-                     * Therefore also do not increment global end.
-                     */
-                    if (resetEdgeAndCounter)
-                    {
-                        continue;
-                    }
+                    peg++;
                 }
+
                 /*
-                 * There is an Option 3: Where the character are simply equal but this in
-                 * implicit
-                 * because i++ == an increment down the edge.
+                 * Reset the edge.
+                 * 
+                 * This is an implementation complexity.
                  */
-                else {
-                    i++;
-                    counter++;
+                if (resetEdgeAndCounter) {
+                    currentEdge = null;
+                    counter = 0;
                 }
+
+                /*
+                 * Continue to next loop if a branch was created.
+                 * Essentially the same character but now it's fresh start,
+                 * Therefore also do not increment global end.
+                 */
+                if (resetEdgeAndCounter) {
+                    continue;
+                }
+            }
+            /*
+             * Option 3: Where the characters equal.
+             */
+            else {
+                i++;
+                counter++;
             }
 
             /*
