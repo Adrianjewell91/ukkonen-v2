@@ -78,8 +78,14 @@ public class SuffixTreeBuilder {
 
             if (isDebug == true) {
                 StringBuilder b = new StringBuilder();
-                Util.suffixes(root, "", s, b, false);
-                System.out.println(b.toString());
+                try {
+                    Util.suffixes(root, "", s, b, false);
+                    System.out.println(b.toString());
+
+                } catch (Exception e)
+                {
+                    System.out.println("ERROR");
+                }
             }
 
             if (isDebug == true) {
@@ -124,7 +130,7 @@ public class SuffixTreeBuilder {
              * Case 2. Traversing an edge...
              */
             else {
-                System.out.println(currentEdge.start);
+                // System.out.println(currentEdge.start);
                 /*
                  * Option 1:
                  * 
@@ -217,6 +223,13 @@ public class SuffixTreeBuilder {
                             // no peg ++ 
                             // break; 
                             resetEdgeAndCounter = false;
+
+                            
+                            currentNode = currentEdge.child;
+                            currentEdge = currentNode.getEdge(c);
+                            counter = 1;
+                            i++;
+                            // i++;
                             break;
                         }
                         else if (
@@ -287,7 +300,6 @@ public class SuffixTreeBuilder {
                     {
                         currentEdge = null;
                         counter = 0;
-
                     }
 
                     /*
@@ -295,7 +307,10 @@ public class SuffixTreeBuilder {
                      * start,
                      * Therefore also do not increment global end.
                      */
-                    continue;
+                    if (resetEdgeAndCounter)
+                    {
+                        continue;
+                    }
                 }
                 /*
                  * There is an Option 3: Where the character are simply equal but this in

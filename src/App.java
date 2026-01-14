@@ -46,7 +46,7 @@ public class App {
         boolean result;
 
         // Test a long string:
-        String s = Test.gene.substring(0, 23) + "$";
+        String s = Test.gene.substring(0, 110) + "$";
 
         b = new StringBuilder();
         root = SuffixTreeBuilder.build(s, new MapNodeFactory(), true, new ArrayList<>());
@@ -64,8 +64,8 @@ public class App {
 
         for (int i = 0; i <= s.length(); i++) {
             String suffix = s.substring(s.length() - i, s.length());
-            System.out.println(suffix);
-            System.out.println(Util.contains(root, s, suffix));
+            // System.out.println(suffix);
+            // System.out.println(Util.contains(root, s, suffix));
             // System.out.println(!Util.contains(root, s, suffix + "*"));
             results.add(Util.contains(root, s, suffix));
 
