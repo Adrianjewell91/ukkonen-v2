@@ -6,11 +6,14 @@ public class App {
     public static void main(String[] args) {
         List<Boolean> results = new ArrayList<>();
         /*
-         * Confirms structure.
+         * Confirms structure for basic strings.
+         * 
+         * This covered the key functionality but were incomplete because of the
+         * complexities of repeat characters
          */
         Test.testTreeStructures(new CharNodeFactory(), results,
-        Arrays.copyOfRange(Test.strings, 0, Test.strings.length - 1),
-        Arrays.copyOfRange(Test.tests, 0, Test.tests.length - 1));
+                Arrays.copyOfRange(Test.strings, 0, Test.strings.length - 1),
+                Arrays.copyOfRange(Test.tests, 0, Test.tests.length - 1));
         Test.testTreeStructures(new MapNodeFactory(), results, Test.strings, Test.tests);
 
         /*
@@ -40,43 +43,19 @@ public class App {
         Test.testSuffixLinkCreationAndTraversal(new CharNodeFactory(), results);
         Test.testSuffixLinkCreationAndTraversal(new MapNodeFactory(), results);
 
-        /* Debugging stuff */
-        Node root;
-        StringBuilder b;
-
-        // Test a long string:
-        String s = Test.gene.substring(0, Test.gene.length()) + "$";
-
-        b = new StringBuilder();
-        root = SuffixTreeBuilder.build(s, new MapNodeFactory(), false, new ArrayList<>());
-        System.out.println(Util.countNodes(root));
-
-        Util.suffixes(root, "", s, b, false);
-        // System.out.println(b.toString());
-
-        // System.out.println(s);
-
         /*
          * Do all tests pass?
          */
         System.out.println("Do all tests pass: " + !results.contains(false));
 
-        for (int i = 0; i <= s.length(); i++) {
-            String suffix = s.substring(s.length() - i, s.length());
-            // System.out.println(suffix);
-            // System.out.println(Util.contains(root, s, suffix));
-            // System.out.println(!Util.contains(root, s, suffix + "*"));
-            results.add(Util.contains(root, s, suffix));
-
-            if (Util.contains(root, s, suffix) == false)
-            {
-                System.out.println(suffix);
-            }
-
-            // Simple check against false positives:
-            results.add(!Util.contains(root, s, suffix + "*"));
-        }
-
-        System.out.println("All the suffixes for the gene present too: " + !results.contains(false));
+        /*
+         * Testing a gene sequence of 5000 characters.
+         * 
+         * All substrings should be present.
+         * 
+         * This test case revealed a lot of bugs in the code, at least 10.
+         * 
+         */
+        Test.testGene(results);
     }
 }

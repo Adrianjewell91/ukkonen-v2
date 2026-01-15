@@ -233,4 +233,43 @@ public class Test {
             }
         }
     }
+
+    public static void testGene(List<Boolean> results) {
+        System.out.println("Testing Gene.");
+        System.out.println("Sequence Length: " + gene.length());
+        /* Debugging stuff */
+        Node root;
+        StringBuilder b;
+    
+        // Test a long string:
+        String s = gene.substring(0, gene.length()) + "$";
+    
+        b = new StringBuilder();
+        root = SuffixTreeBuilder.build(s, new MapNodeFactory(), false, new ArrayList<>());
+        System.out.println(Util.countNodes(root));
+    
+        Util.suffixes(root, "", s, b, false);
+        // System.out.println(b.toString());
+    
+        // System.out.println(s);
+    
+    
+        for (int i = 0; i <= s.length(); i++) {
+            String suffix = s.substring(s.length() - i, s.length());
+            // System.out.println(suffix);
+            // System.out.println(Util.contains(root, s, suffix));
+            // System.out.println(!Util.contains(root, s, suffix + "*"));
+            results.add(Util.contains(root, s, suffix));
+    
+            if (Util.contains(root, s, suffix) == false)
+            {
+                System.out.println(suffix);
+            }
+    
+            // Simple check against false positives:
+            results.add(!Util.contains(root, s, suffix + "*"));
+        }
+    
+        System.out.println("All the suffixes for the gene present too: " + !results.contains(false));
+    }
 }
