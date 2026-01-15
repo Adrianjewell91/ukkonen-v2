@@ -219,25 +219,30 @@ public class SuffixTreeBuilder {
                     else {
                         Node internalNode = factory.createNode();
 
-                        // if (currentEdge.start + counter == 40 && currentEdge.end.end == 39)
+                        // if (currentEdge.start + counter >= currentEdge.end.end)
                         // {
                         // System.out.print("found");
                         // }
                         Edge split = new Edge(currentEdge.start + counter, currentEdge.end);
                         Edge newEdge = new Edge(i, globalEnd);
+                        
+                        // Insert the node.
+                        split.child = currentEdge.child;
 
-                        internalNode.setEdge(s.charAt(currentEdge.start + counter), split);
-                        internalNode.setEdge(c, newEdge);
+                        // Update CurrentEdge: create a hard end, and set child to the new node.
+                        currentEdge.child = internalNode;
+                        currentEdge.end = new End(currentEdge.start + counter);
 
                         /*
+                         * Set edges and suffix link.
+                         * 
                          * Internal nodes be default point to the root unless otherwise modified later.
                          */
                         internalNode.setSuffixLink(root);
+                        internalNode.setEdge(s.charAt(currentEdge.start + counter), split);
+                        internalNode.setEdge(c, newEdge);
 
-                        split.child = currentEdge.child;
 
-                        currentEdge.child = internalNode;
-                        currentEdge.end = new End(currentEdge.start + counter);
 
                         /*
                          * Create the suffix link.
@@ -249,7 +254,7 @@ public class SuffixTreeBuilder {
                             lastCreatedInternalNode = internalNode;
                         }
                         /*
-                         * nb.
+                         * 
                          * Reset the last created internal node if the traversal reaches the root,
                          * because each link of suffixes must terminate at the root, which means
                          * traversing down from the root starts a "new" set of links.
