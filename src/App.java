@@ -42,20 +42,25 @@ public class App {
          */
         Test.testSuffixLinkCreationAndTraversal(new CharNodeFactory(), results);
         Test.testSuffixLinkCreationAndTraversal(new MapNodeFactory(), results);
+        
+        /*
+        * Testing a gene sequence of 5000 characters.
+        * 
+        * All substrings should be present.
+        * 
+        * This test case revealed a lot of bugs in the code, at least 10.
+        * 
+        */
+       Test.testGene(results);
+       
+       Test.testSimpleGST(results);
+
+       Test.testLargeGST(results);
 
         /*
-         * Do all tests pass?
-         */
+        * Do all tests pass?
+        */
         System.out.println("Do all tests pass: " + !results.contains(false));
-
-        /*
-         * Testing a gene sequence of 5000 characters.
-         * 
-         * All substrings should be present.
-         * 
-         * This test case revealed a lot of bugs in the code, at least 10.
-         * 
-         */
-        Test.testGene(results);
+        System.out.println(results.size());
     }
 }

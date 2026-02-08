@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Test {
     /*
@@ -20,75 +21,81 @@ public class Test {
      */
 
     // String 1: abc
-    // /abc
-    // /bc
-    // /c
-    public static final String s1Test = "/abc\n/bc\n/c\n";
+    public static final String s1Test = """
+            /abc
+            /bc
+            /c
+            """;
     public static final String s1 = "abc"; // Simple
 
     // String 2: abcabc
-    // /abcabc
-    // /bcabc
-    // /cabc
-    public static final String s2Test = "/abcabc\n/bcabc\n/cabc\n";
+    public static final String s2Test = """
+            /abcabc
+            /bcabc
+            /cabc
+            """;
     public static final String s2 = "abcabc"; // Check counter goes up
 
     // String 3: abcabcdea
-    // /abc/abcdea
-    // /abc/dea
-    // /bc/abcdea
-    // /bc/dea
-    // /c/abcdea
-    // /c/dea
-    // /dea
-    // /ea
-    public static final String s3Test = "/abc/abcdea\n/abc/dea\n/bc/abcdea\n/bc/dea\n/c/abcdea\n/c/dea\n/dea\n/ea\n";
+    public static final String s3Test = """
+            /abc/abcdea
+            /abc/dea
+            /bc/abcdea
+            /bc/dea
+            /c/abcdea
+            /c/dea
+            /dea
+            /ea
+            """;
     public static final String s3 = "abcabcdea"; // Check formation of suffix links
 
     // String 4: abcabcdeabcabf
-    // /ab/c/ab/cdeabcabf
-    // /ab/c/ab/f
-    // /ab/c/deabcabf
-    // /ab/f
-    // /b/c/ab/cdeabcabf
-    // /b/c/ab/f
-    // /b/c/deabcabf
-    // /b/f
-    // /c/ab/cdeabcabf
-    // /c/ab/f
-    // /c/deabcabf
-    // /deabcabf
-    // /eabcabf
-    // /f
-    public static final String s4Test = "/ab/c/ab/cdeabcabf\n/ab/c/ab/f\n/ab/c/deabcabf\n/ab/f\n/b/c/ab/cdeabcabf\n/b/c/ab/f\n/b/c/deabcabf\n/b/f\n/c/ab/cdeabcabf\n/c/ab/f\n/c/deabcabf\n/deabcabf\n/eabcabf\n/f\n";
+    public static final String s4Test = """
+            /ab/c/ab/cdeabcabf
+            /ab/c/ab/f
+            /ab/c/deabcabf
+            /ab/f
+            /b/c/ab/cdeabcabf
+            /b/c/ab/f
+            /b/c/deabcabf
+            /b/f
+            /c/ab/cdeabcabf
+            /c/ab/f
+            /c/deabcabf
+            /deabcabf
+            /eabcabf
+            /f
+            """;
     public static final String s4 = "abcabcdeabcabf"; // Check traversal of suffix links to do second branching.
 
     // String 5: abcabcdeabcabfabcabcdg
-    // /ab/c/ab/cd/eabcabfabcabcdg
-    // /ab/c/ab/cd/g
-    // /ab/c/ab/fabcabcdg
-    // /ab/c/d/eabcabfabcabcdg
-    // /ab/c/d/g
-    // /ab/fabcabcdg
-    // /b/c/ab/cd/eabcabfabcabcdg
-    // /b/c/ab/cd/g
-    // /b/c/ab/fabcabcdg
-    // /b/c/d/eabcabfabcabcdg
-    // /b/c/d/g
-    // /b/fabcabcdg
-    // /c/ab/cd/eabcabfabcabcdg
-    // /c/ab/cd/g
-    // /c/ab/fabcabcdg
-    // /c/d/eabcabfabcabcdg
-    // /c/d/g
-    // /d/eabcabfabcabcdg
-    // /d/g
-    // /eabcabfabcabcdg
-    // /fabcabcdg
-    // /g
-    public static final String s5Test = "/ab/c/ab/cd/eabcabfabcabcdg\n/ab/c/ab/cd/g\n/ab/c/ab/fabcabcdg\n/ab/c/d/eabcabfabcabcdg\n/ab/c/d/g\n/ab/fabcabcdg\n/b/c/ab/cd/eabcabfabcabcdg\n/b/c/ab/cd/g\n/b/c/ab/fabcabcdg\n/b/c/d/eabcabfabcabcdg\n/b/c/d/g\n/b/fabcabcdg\n/c/ab/cd/eabcabfabcabcdg\n/c/ab/cd/g\n/c/ab/fabcabcdg\n/c/d/eabcabfabcabcdg\n/c/d/g\n/d/eabcabfabcabcdg\n/d/g\n/eabcabfabcabcdg\n/fabcabcdg\n/g\n";
-    public static final String s5 = "abcabcdeabcabfabcabcdg"; // Check only node "traversal" after reaching root, proves
-                                                              // correct sf
+    public static final String s5Test = """
+            /ab/c/ab/cd/eabcabfabcabcdg
+            /ab/c/ab/cd/g
+            /ab/c/ab/fabcabcdg
+            /ab/c/d/eabcabfabcabcdg
+            /ab/c/d/g
+            /ab/fabcabcdg
+            /b/c/ab/cd/eabcabfabcabcdg
+            /b/c/ab/cd/g
+            /b/c/ab/fabcabcdg
+            /b/c/d/eabcabfabcabcdg
+            /b/c/d/g
+            /b/fabcabcdg
+            /c/ab/cd/eabcabfabcabcdg
+            /c/ab/cd/g
+            /c/ab/fabcabcdg
+            /c/d/eabcabfabcabcdg
+            /c/d/g
+            /d/eabcabfabcabcdg
+            /d/g
+            /eabcabfabcabcdg
+            /fabcabcdg
+            /g
+            """;
+    public static final String s5 = "abcabcdeabcabfabcabcdg";
+    // Check only node "traversal" after reaching root, proves
+    // correct sf
     // extensions 2x.
 
     /*
@@ -97,7 +104,11 @@ public class Test {
      * It's not really GST but also testing that repeats not starting at the
      * beginning get handled correctly.
      */
-    public static final String gst1 = "abcabc" + "$" + "defdef" + "#";
+    private static final String gst1 = "abcabc" + "$";
+
+    private static final String gst2 = "defdef" + "#";
+
+    public static final String gst1Andgst2 = gst1 + gst2;
 
     public static final String gst1and2Expected = """
             /abc/abc$defdef#
@@ -118,34 +129,108 @@ public class Test {
 
     public static final String s6 = generate();
     public static final String s6Test = """
-                /t
-                /uzyxzyxwt
-                /vzyxzyuzyxzyxwt
-                /w/t
-                /w/vzyxzyuzyxzyxwt
-                /x/w/t
-                /x/w/vzyxzyuzyxzyxwt
-                /x/zy/uzyxzyxwt
-                /x/zy/xw/t
-                /x/zy/xw/vzyxzyuzyxzyxwt
-                /y/uzyxzyxwt
-                /y/x/w/t
-                /y/x/w/vzyxzyuzyxzyxwt
-                /y/x/zy/uzyxzyxwt
-                /y/x/zy/xw/t
-                /y/x/zy/xw/vzyxzyuzyxzyxwt
-                /zy/uzyxzyxwt
-                /zy/x/w/t
-                /zy/x/w/vzyxzyuzyxzyxwt
-                /zy/x/zy/uzyxzyxwt
-                /zy/x/zy/xw/t
-                /zy/x/zy/xw/vzyxzyuzyxzyxwt
-                """;
+            /t
+            /uzyxzyxwt
+            /vzyxzyuzyxzyxwt
+            /w/t
+            /w/vzyxzyuzyxzyxwt
+            /x/w/t
+            /x/w/vzyxzyuzyxzyxwt
+            /x/zy/uzyxzyxwt
+            /x/zy/xw/t
+            /x/zy/xw/vzyxzyuzyxzyxwt
+            /y/uzyxzyxwt
+            /y/x/w/t
+            /y/x/w/vzyxzyuzyxzyxwt
+            /y/x/zy/uzyxzyxwt
+            /y/x/zy/xw/t
+            /y/x/zy/xw/vzyxzyuzyxzyxwt
+            /zy/uzyxzyxwt
+            /zy/x/w/t
+            /zy/x/w/vzyxzyuzyxzyxwt
+            /zy/x/zy/uzyxzyxwt
+            /zy/x/zy/xw/t
+            /zy/x/zy/xw/vzyxzyuzyxzyxwt
+            """;
 
-    public static final String[] strings = new String[] { s1, s2, s3, s4, s5, s6, gst1 };
-    public static final String[] tests = new String[] { s1Test, s2Test, s3Test, s4Test, s5Test, s6Test, gst1and2Expected };
+    public static final String[] strings = new String[] { s1, s2, s3, s4, s5, s6, gst1Andgst2 };
+    public static final String[] tests = new String[] { s1Test, s2Test, s3Test, s4Test, s5Test, s6Test,
+            gst1and2Expected };
 
-    public static final String gene = "gatcctccatatacaacggtatctccacctcaggtttagatctcaacaacggaaccattgccgacatgagacagttaggtatcgtcgagagttacaagctaaaacgagcagtagtcagctctgcatctgaagccgctgaagttctactaagggtggataacatcatccgtgcaagaccaagaaccgccaatagacaacatatgtaacatatttaggatatacctcgaaaataataaaccgccacactgtcattattataattagaaacagaacgcaaaaattatccactatataattcaaagacgcgaaaaaaaaagaacaacgcgtcatagaacttttggcaattcgcgtcacaaataaattttggcaacttatgtttcctcttcgagcagtactcgagccctgtctcaagaatgtaataatacccatcgtaggtatggttaaagatagcatctccacaacctcaaagctccttgccgagagtcgccctcctttgtcgagtaattttcacttttcatatgagaacttattttcttattctttactctcacatcctgtagtgattgacactgcaacagccaccatcactagaagaacagaacaattacttaatagaaaaattatatcttcctcgaaacgatttcctgcttccaacatctacgtatatcaagaagcattcacttaccatgacacagcttcagatttcattattgctgacagctactatatcactactccatctagtagtggccacgccctatgaggcatatcctatcggaaaacaataccccccagtggcaagagtcaatgaatcgtttacatttcaaatttccaatgatacctataaatcgtctgtagacaagacagctcaaataacatacaattgcttcgacttaccgagctggctttcgtttgactctagttctagaacgttctcaggtgaaccttcttctgacttactatctgatgcgaacaccacgttgtatttcaatgtaatactcgagggtacggactctgccgacagcacgtctttgaacaatacataccaatttgttgttacaaaccgtccatccatctcgctatcgtcagatttcaatctattggcgttgttaaaaaactatggttatactaacggcaaaaacgctctgaaactagatcctaatgaagtcttcaacgtgacttttgaccgttcaatgttcactaacgaagaatccattgtgtcgtattacggacgttctcagttgtataatgcgccgttacccaattggctgttcttcgattctggcgagttgaagtttactgggacggcaccggtgataaactcggcgattgctccagaaacaagctacagttttgtcatcatcgctacagacattgaaggattttctgccgttgaggtagaattcgaattagtcatcggggctcaccagttaactacctctattcaaaatagtttgataatcaacgttactgacacaggtaacgtttcatatgacttacctctaaactatgtttatctcgatgacgatcctatttcttctgataaattgggttctataaacttattggatgctccagactgggtggcattagataatgctaccatttccgggtctgtcccagatgaattactcggtaagaactccaatcctgccaatttttctgtgtccatttatgatacttatggtgatgtgatttatttcaacttcgaagttgtctccacaacggatttgtttgccattagttctcttcccaatattaacgctacaaggggtgaatggttctcctactattttttgccttctcagtttacagactacgtgaatacaaacgtttcattagagtttactaattcaagccaagaccatgactgggtgaaattccaatcatctaatttaacattagctggagaagtgcccaagaatttcgacaagctttcattaggtttgaaagcgaaccaaggttcacaatctcaagagctatattttaacatcattggcatggattcaaagataactcactcaaaccacagtgcgaatgcaacgtccacaagaagttctcaccactccacctcaacaagttcttacacatcttctacttacactgcaaaaatttcttctacctccgctgctgctacttcttctgctccagcagcgctgccagcagccaataaaacttcatctcacaataaaaaagcagtagcaattgcgtgcggtgttgctatcccattaggcgttatcctagtagctctcatttgcttcctaatattctggagacgcagaagggaaaatccagacgatgaaaacttaccgcatgctattagtggacctgatttgaataatcctgcaaataaaccaaatcaagaaaacgctacacctttgaacaacccctttgatgatgatgcttcctcgtacgatgatacttcaatagcaagaagattggctgctttgaacactttgaaattggataaccactctgccactgaatctgatatttccagcgtggatgaaaagagagattctctatcaggtatgaatacatacaatgatcagttccaatcccaaagtaaagaagaattattagcaaaacccccagtacagcctccagagagcccgttctttgacccacagaataggtcttcttctgtgtatatggatagtgaaccagcagtaaataaatcctggcgatatactggcaacctgtcaccagtctctgatattgtcagagacagttacggatcacaaaaaactgttgatacagaaaaacttttcgatttagaagcaccagagaaggaaaaacgtacgtcaagggatgtcactatgtcttcactggacccttggaacagcaatattagcccttctcccgtaagaaaatcagtaacaccatcaccatataacgtaacgaagcatcgtaaccgccacttacaaaatattcaagactctcaaagcggtaaaaacggaatcactcccacaacaatgtcaacttcatcttctgacgattttgttccggttaaagatggtgaaaatttttgctgggtccatagcatggaaccagacagaagaccaagtaagaaaaggttagtagatttttcaaataagagtaatgtcaatgttggtcaagttaaggacattcacggacgcatcccagaaatgctgtgattatacgcaacgatattttgcttaattttattttcctgttttattttttattagtggtttacagataccctatattttatttagtttttatacttagagacatttaattttaattccattcttcaaatttcatttttgcacttaaaacaaagatccaaaaatgctctcgccctcttcatattgagaatacactccattcaaaattttgtcgtcaccgctgattaatttttcactaaactgatgaataatcaaaggccccacgtcagaaccgactaaagaagtgagttttattttaggaggttgaaaaccattattgtctggtaaattttcatcttcttgacatttaacccagtttgaatccctttcaatttctgctttttcctccaaactatcgaccctcctgtttctgtccaacttatgtcctagttccaattcgatcgcattaataactgcttcaaatgttattgtgtcatcgttgactttaggtaatttctccaaatgcataatcaaactatttaaggaagatcggaattcgtcgaacacttcagtttccgtaatgatctgatcgtctttatccacatgttgtaattcactaaaatctaaaacgtatttttcaatgcataaatcgttctttttattaataatgcagatggaaaatctgtaaacgtgcgttaatttagaaagaacatccagtataagttcttctatatagtcaattaaagcaggatgcctattaatgggaacgaactgcggcaagttgaatgactggtaagtagtgtagtcgaatgactgaggtgggtatacatttctataaaataaaatcaaattaatgtagcattttaagtataccctcagccacttctctacccatctattcataaagctgacgcaacgattactattttttttttcttcttggatctcagtcgtcgcaaaaacgtataccttctttttccgaccttttttttagctttctggaaaagtttatattagttaaacagggtctagtcttagtgtgaaagctagtggtttcgattgactgatattaagaaagtggaaattaaattagtagtgtagacgtatatgcatatgtatttctcgcctgtttatgtttctacgtacttttgatttatagcaaggggaaaagaaatacatactattttttggtaaaggtgaaagcataatgtaaaagctagaataaaatggacgaaataaagagaggcttagttcatcttttttccaaaaagcacccaatgataataactaaaatgaaaaggatttgccatctgtcagcaacatcagttgtgtgagcaataataaaatcatcacctccgttgcctttagcgcgtttgtcgtttgtatcttccgtaattttagtcttatcaatgggaatcataaattttccaatgaattagcaatttcgtccaattctttttgagcttcttcatatttgctttggaattcttcgcacttcttttcccattcatctctttcttcttccaaagcaacgatccttctacccatttgctcagagttcaaatcggcctctttcagtttatccattgcttccttcagtttggcttcactgtcttctagctgttgttctagatcctggtttttcttggtgtagttctcattattagatctcaagttattggagtcttcagccaattgctttgtatcagacaattgactctctaacttctccacttcactgtcgagttgctcgtttttagcggacaaagatttaatctcgttttctttttcagtgttagattgctctaattctttgagctgttctctcagctcctcatatttttcttgccatgactcagattctaattttaagctattcaatttctctttgatc";
+    // This is a real gene from a public database I forgot where.
+    public static final String gene = """
+            gatcctccatatacaacggtatctccacctcaggtttagatctcaacaacggaaccattgccgacatgaga
+            cagttaggtatcgtcgagagttacaagctaaaacgagcagtagtcagctctgcatctgaagccgctgaagt
+            tctactaagggtggataacatcatccgtgcaagaccaagaaccgccaatagacaacatatgtaacatattt
+            aggatatacctcgaaaataataaaccgccacactgtcattattataattagaaacagaacgcaaaaattat
+            ccactatataattcaaagacgcgaaaaaaaaagaacaacgcgtcatagaacttttggcaattcgcgtcaca
+            aataaattttggcaacttatgtttcctcttcgagcagtactcgagccctgtctcaagaatgtaataatacc
+            catcgtaggtatggttaaagatagcatctccacaacctcaaagctccttgccgagagtcgccctcctttgt
+            cgagtaattttcacttttcatatgagaacttattttcttattctttactctcacatcctgtagtgattgac
+            actgcaacagccaccatcactagaagaacagaacaattacttaatagaaaaattatatcttcctcgaaacg
+            atttcctgcttccaacatctacgtatatcaagaagcattcacttaccatgacacagcttcagatttcatta
+            ttgctgacagctactatatcactactccatctagtagtggccacgccctatgaggcatatcctatcggaaa
+            acaataccccccagtggcaagagtcaatgaatcgtttacatttcaaatttccaatgatacctataaatcgt
+            ctgtagacaagacagctcaaataacatacaattgcttcgacttaccgagctggctttcgtttgactctagt
+            tctagaacgttctcaggtgaaccttcttctgacttactatctgatgcgaacaccacgttgtatttcaatgt
+            aatactcgagggtacggactctgccgacagcacgtctttgaacaatacataccaatttgttgttacaaacc
+            gtccatccatctcgctatcgtcagatttcaatctattggcgttgttaaaaaactatggttatactaacggc
+            aaaaacgctctgaaactagatcctaatgaagtcttcaacgtgacttttgaccgttcaatgttcactaacga
+            agaatccattgtgtcgtattacggacgttctcagttgtataatgcgccgttacccaattggctgttcttcg
+            attctggcgagttgaagtttactgggacggcaccggtgataaactcggcgattgctccagaaacaagctac
+            agttttgtcatcatcgctacagacattgaaggattttctgccgttgaggtagaattcgaattagtcatcgg
+            ggctcaccagttaactacctctattcaaaatagtttgataatcaacgttactgacacaggtaacgtttcat
+            atgacttacctctaaactatgtttatctcgatgacgatcctatttcttctgataaattgggttctataaac
+            ttattggatgctccagactgggtggcattagataatgctaccatttccgggtctgtcccagatgaattact
+            cggtaagaactccaatcctgccaatttttctgtgtccatttatgatacttatggtgatgtgatttatttca
+            acttcgaagttgtctccacaacggatttgtttgccattagttctcttcccaatattaacgctacaaggggt
+            gaatggttctcctactattttttgccttctcagtttacagactacgtgaatacaaacgtttcattagagtt
+            tactaattcaagccaagaccatgactgggtgaaattccaatcatctaatttaacattagctggagaagtgc
+            ccaagaatttcgacaagctttcattaggtttgaaagcgaaccaaggttcacaatctcaagagctatatttt
+            aacatcattggcatggattcaaagataactcactcaaaccacagtgcgaatgcaacgtccacaagaagttc
+            tcaccactccacctcaacaagttcttacacatcttctacttacactgcaaaaatttcttctacctccgctg
+            ctgctacttcttctgctccagcagcgctgccagcagccaataaaacttcatctcacaataaaaaagcagta
+            gcaattgcgtgcggtgttgctatcccattaggcgttatcctagtagctctcatttgcttcctaatattctg
+            gagacgcagaagggaaaatccagacgatgaaaacttaccgcatgctattagtggacctgatttgaataatc
+            ctgcaaataaaccaaatcaagaaaacgctacacctttgaacaacccctttgatgatgatgcttcctcgtac
+            gatgatacttcaatagcaagaagattggctgctttgaacactttgaaattggataaccactctgccactga
+            atctgatatttccagcgtggatgaaaagagagattctctatcaggtatgaatacatacaatgatcagttcc
+            aatcccaaagtaaagaagaattattagcaaaacccccagtacagcctccagagagcccgttctttgaccca
+            cagaataggtcttcttctgtgtatatggatagtgaaccagcagtaaataaatcctggcgatatactggcaa
+            cctgtcaccagtctctgatattgtcagagacagttacggatcacaaaaaactgttgatacagaaaaacttt
+            tcgatttagaagcaccagagaaggaaaaacgtacgtcaagggatgtcactatgtcttcactggacccttgg
+            aacagcaatattagcccttctcccgtaagaaaatcagtaacaccatcaccatataacgtaacgaagcatcg
+            taaccgccacttacaaaatattcaagactctcaaagcggtaaaaacggaatcactcccacaacaatgtcaa
+            cttcatcttctgacgattttgttccggttaaagatggtgaaaatttttgctgggtccatagcatggaacca
+            gacagaagaccaagtaagaaaaggttagtagatttttcaaataagagtaatgtcaatgttggtcaagttaa
+            ggacattcacggacgcatcccagaaatgctgtgattatacgcaacgatattttgcttaattttattttcct
+            gttttattttttattagtggtttacagataccctatattttatttagtttttatacttagagacatttaat
+            tttaattccattcttcaaatttcatttttgcacttaaaacaaagatccaaaaatgctctcgccctcttcat
+            attgagaatacactccattcaaaattttgtcgtcaccgctgattaatttttcactaaactgatgaataatc
+            aaaggccccacgtcagaaccgactaaagaagtgagttttattttaggaggttgaaaaccattattgtctgg
+            taaattttcatcttcttgacatttaacccagtttgaatccctttcaatttctgctttttcctccaaactat
+            cgaccctcctgtttctgtccaacttatgtcctagttccaattcgatcgcattaataactgcttcaaatgtt
+            attgtgtcatcgttgactttaggtaatttctccaaatgcataatcaaactatttaaggaagatcggaattc
+            gtcgaacacttcagtttccgtaatgatctgatcgtctttatccacatgttgtaattcactaaaatctaaaa
+            cgtatttttcaatgcataaatcgttctttttattaataatgcagatggaaaatctgtaaacgtgcgttaat
+            ttagaaagaacatccagtataagttcttctatatagtcaattaaagcaggatgcctattaatgggaacgaa
+            ctgcggcaagttgaatgactggtaagtagtgtagtcgaatgactgaggtgggtatacatttctataaaata
+            aaatcaaattaatgtagcattttaagtataccctcagccacttctctacccatctattcataaagctgacg
+            caacgattactattttttttttcttcttggatctcagtcgtcgcaaaaacgtataccttctttttccgacc
+            ttttttttagctttctggaaaagtttatattagttaaacagggtctagtcttagtgtgaaagctagtggtt
+            tcgattgactgatattaagaaagtggaaattaaattagtagtgtagacgtatatgcatatgtatttctcgc
+            ctgtttatgtttctacgtacttttgatttatagcaaggggaaaagaaatacatactattttttggtaaagg
+            tgaaagcataatgtaaaagctagaataaaatggacgaaataaagagaggcttagttcatcttttttccaaa
+            aagcacccaatgataataactaaaatgaaaaggatttgccatctgtcagcaacatcagttgtgtgagcaat
+            aataaaatcatcacctccgttgcctttagcgcgtttgtcgtttgtatcttccgtaattttagtcttatcaa
+            tgggaatcataaattttccaatgaattagcaatttcgtccaattctttttgagcttcttcatatttgcttt
+            ggaattcttcgcacttcttttcccattcatctctttcttcttccaaagcaacgatccttctacccatttgc
+            tcagagttcaaatcggcctctttcagtttatccattgcttccttcagtttggcttcactgtcttctagctg
+            ttgttctagatcctggtttttcttggtgtagttctcattattagatctcaagttattggagtcttcagcca
+            attgctttgtatcagacaattgactctctaacttctccacttcactgtcgagttgctcgtttttagcggac
+            aaagatttaatctcgttttctttttcagtgttagattgctctaattctttgagctgttctctcagctcctc
+            atatttttcttgccatgactcagattctaattttaagctattcaatttctctttgatc.
+                    """.replace("\n", "");
 
     public static void testSuffixLinkCreationAndTraversal(NodeFactory factory, List<Boolean> results) {
         System.out.println("Logs for string, did it traverse the suffix links correctly for string:" + s5 + "?");
@@ -202,7 +287,8 @@ public class Test {
         return test;
     }
 
-    public static void testTreeStructures(NodeFactory factory, List<Boolean> results, String[] strings, String[] tests) {
+    public static void testTreeStructures(NodeFactory factory, List<Boolean> results, String[] strings,
+            String[] tests) {
         System.out.println("Checking test trees' final structure:");
 
         for (int i = 0; i < strings.length; i++) {
@@ -240,36 +326,131 @@ public class Test {
         /* Debugging stuff */
         Node root;
         StringBuilder b;
-    
+
         // Test a long string:
         String s = gene.substring(0, gene.length()) + "$";
-    
+
         b = new StringBuilder();
         root = SuffixTreeBuilder.build(s, new MapNodeFactory(), false, new ArrayList<>());
         System.out.println(Util.countNodes(root));
-    
-        Util.suffixes(root, "", s, b, false);
+
+        // Util.suffixes(root, "", s, b, false);
         // System.out.println(b.toString());
-    
+
         // System.out.println(s);
-    
-    
+
         for (int i = 0; i <= s.length(); i++) {
             String suffix = s.substring(s.length() - i, s.length());
             // System.out.println(suffix);
             // System.out.println(Util.contains(root, s, suffix));
             // System.out.println(!Util.contains(root, s, suffix + "*"));
             results.add(Util.contains(root, s, suffix));
-    
-            if (Util.contains(root, s, suffix) == false)
-            {
+
+            if (Util.contains(root, s, suffix) == false) {
                 System.out.println(suffix);
             }
-    
+
             // Simple check against false positives:
             results.add(!Util.contains(root, s, suffix + "*"));
         }
-    
-        System.out.println("All the suffixes for the gene present too: " + !results.contains(false));
+
+        // System.out.println("All tests plus gene test: " + !results.contains(false));
+    }
+
+    public static void testSimpleGST(List<Boolean> results) {
+        System.out.println("Simple GST test, 2 strings.");
+        /* Debugging stuff */
+        Node root;
+        StringBuilder b;
+
+        // Test a long string:
+        String s = gst1Andgst2;
+
+        b = new StringBuilder();
+        root = SuffixTreeBuilder.build(s, new MapNodeFactory(), false, new ArrayList<>());
+        System.out.println(Util.countNodes(root));
+
+        // Util.suffixes(root, "", s, b, false);
+        // System.out.println(b.toString());
+
+        for (String str : List.of(gst1, gst2, s)) {
+            for (int i = 0; i <= str.length(); i++) {
+                String suffix = str.substring(str.length() - i, str.length());
+                // System.out.println(suffix);
+                // System.out.println(Util.contains(root, s, suffix));
+                // System.out.println(!Util.contains(root, s, suffix + "*"));
+                results.add(Util.contains(root, s, suffix));
+
+                if (Util.contains(root, s, suffix) == false) {
+                    System.out.println(suffix);
+                }
+
+                // Simple check against false positives:
+                results.add(!Util.contains(root, s, suffix + "*"));
+            }
+        }
+
+        // System.out.println("All tests plus gst test: " + !results.contains(false));
+    }
+
+    public static void testLargeGST(List<Boolean> results) {
+        System.out.println("Large GST test, 10 strings.");
+        /* Debugging stuff */
+        Node root;
+        StringBuilder b;
+
+        // Test a long string:
+        List<String> strings = new ArrayList<>();
+        List<String> delimiters = List.of("1", "2", "3", "4", "5", "6", "7", "8", "9", "0");
+
+        for (String delimiter : delimiters) {
+            strings.add(generateRandomLowercaseString(100) + delimiter);
+        }
+
+        String s = String.join("", strings);
+
+        strings.add(s);
+
+        b = new StringBuilder();
+        root = SuffixTreeBuilder.build(s, new MapNodeFactory(), false, new ArrayList<>());
+        System.out.println(Util.countNodes(root));
+
+        // Util.suffixes(root, "", s, b, false);
+        // System.out.println(b.toString());
+
+        for (String str : strings) {
+            for (int i = 0; i <= str.length(); i++) {
+                String suffix = str.substring(str.length() - i, str.length());
+                // System.out.println(suffix);
+                // System.out.println(Util.contains(root, s, suffix));
+                // System.out.println(!Util.contains(root, s, suffix + "*"));
+                results.add(Util.contains(root, s, suffix));
+
+                if (Util.contains(root, s, suffix) == false) {
+                    System.out.println(suffix);
+                }
+
+                // Simple check against false positives:
+                results.add(!Util.contains(root, s, suffix + "*"));
+            }
+        }
+
+        // System.out.println("All tests plus gst test: " + !results.contains(false));
+    }
+
+    public static String generateRandomLowercaseString(int length) {
+        // The characters from which to choose
+        String characters = "abcdefghijklmnopqrstuvwxyz";
+        Random random = new Random();
+        StringBuilder stringBuilder = new StringBuilder(length);
+
+        for (int i = 0; i < length; i++) {
+            // Get a random index from 0 to 25 (the length of the characters string - 1)
+            int randomIndex = random.nextInt(characters.length());
+            // Append the character at that random index to the StringBuilder
+            stringBuilder.append(characters.charAt(randomIndex));
+        }
+
+        return stringBuilder.toString();
     }
 }

@@ -3,28 +3,47 @@ import java.util.Queue;
 
 public class Util {
 
-    public static boolean contains(Node tree, String s, String query) {
+    // Currently for exact match of suffix not contains. 
+    public static boolean contains(Node tree, String s, String suffix) {
         int i = 0;
         Node current = tree;
     
-        while (i < query.length()) {
+        while (i < suffix.length()) {
             if (current == null) {
                 return false;
             }
+
             Node temp = current;
             for (Edge e : temp.getAllEdges()) {
     
                 current = null;
-                int d = e.end.end - e.start;
-                int remaining = query.length() - i;
+                int edgeLength = e.end.end - e.start;
+                int remaining = suffix.length() - i;
     
-                if (d <= remaining &&
+                if (edgeLength <= remaining &&
                         s
                         .substring(e.start, e.end.end)
-                        .equals(query.substring(i, i + (e.end.end - e.start)))) 
+                        .equals(suffix.substring(i, i + (edgeLength)))) 
                 {
                     current = e.child;
-                    i += e.end.end - e.start;
+                    i += edgeLength;
+
+                    // In the case where the suffix is completed,
+                    // current == null but since i == suffix.length(), the while loop ends
+                    // and the function therefore returns true.
+                    break;
+                }
+
+                // For contains any string not just a suffix.
+                
+                //When remaining < edgeLength and it is contained within the edge, AND i can be exhausted 
+                // reduce i, current = null, and break. 
+                if (remaining < edgeLength && 
+                    s.substring(e.start, e.start + remaining).equals(suffix.substring(i, suffix.length())))
+                {
+                    
+                    current = e.child;
+                    i += remaining;
                     break;
                 }
             }
