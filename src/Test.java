@@ -158,6 +158,15 @@ public class Test {
             gst1and2Expected };
 
     // This is a real gene from a public database I forgot where.
+    // For some context, this test was pivotal in getting an implementation.
+    // For example, all the above test passed before adding this test,
+    // Then there were probable 10 or so bugs that this test revealed. 
+    // My intuition told me there were bugs, but the test proved it.
+    // The process for solving them was adding debug statements and going through
+    // a substring step by step.
+    // The longest substring was about 200 characters long perhaps.
+    // The strength in the test was the limiting number of possible characters, 
+    // which created all the possible edge cases. 
     public static final String gene = """
             gatcctccatatacaacggtatctccacctcaggtttagatctcaacaacggaaccattgccgacatgaga
             cagttaggtatcgtcgagagttacaagctaaaacgagcagtagtcagctctgcatctgaagccgctgaagt
